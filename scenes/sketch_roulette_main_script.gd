@@ -87,16 +87,20 @@ func _ready() -> void:
 		var time: int = cfg.get_value("MAIN", "timer", 0)
 		enable_nsfw_chk_btn.button_pressed = cfg.get_value("MAIN", "use_nsfw", false)
 		spicy_spn_bx.value = cfg.get_value("MAIN", "spicyness", 0.0)
-		
+		print("Time: ", time)
 		if 0 < time:
 			var hours: int = floori(time / float(3600))
 			time -= hours * 3600
 			var minutes: int = floori(time / float(60))
-			time -= minutes
+			time -= minutes * 60
 		
 			hour_spn_bx.value = hours
 			min_spn_bx.value = minutes
 			sec_spn_bx.value = time
+			
+			print(hours)
+			print(minutes)
+			print(time)
 	
 	switch_window(0)
 	start_timer_btn.pressed.connect(_on_start_timer_pressed)
