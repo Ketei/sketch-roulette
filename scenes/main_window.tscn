@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bmbr0sfkf54tq"]
+[gd_scene load_steps=17 format=3 uid="uid://bmbr0sfkf54tq"]
 
 [ext_resource type="Script" uid="uid://bqk7a0kl6l0jj" path="res://scenes/sketch_roulette_main_script.gd" id="1_ax7xg"]
 [ext_resource type="Texture2D" uid="uid://dtyrj12ky41iu" path="res://icons/edit_icon.svg" id="2_exmdq"]
@@ -30,6 +30,24 @@ content_margin_right = 8.0
 content_margin_bottom = 8.0
 bg_color = Color(0.180392, 0.180392, 0.180392, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4u0h"]
+bg_color = Color(0.172833, 0.172833, 0.172833, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qvr6y"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0885599, 0.0885599, 0.0885599, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m7h58"]
+bg_color = Color(0.186497, 0.20679, 0.23864, 1)
+
+[sub_resource type="Theme" id="Theme_m7h58"]
+Tree/styles/title_button_hover = SubResource("StyleBoxFlat_c4u0h")
+Tree/styles/title_button_normal = SubResource("StyleBoxFlat_qvr6y")
+Tree/styles/title_button_pressed = SubResource("StyleBoxFlat_m7h58")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sq7ho"]
 content_margin_left = 6.0
 content_margin_top = 8.0
@@ -48,6 +66,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_tyee0")
 script = ExtResource("1_ax7xg")
 
 [node name="MainWindow" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 2
 
 [node name="Title" type="Label" parent="MainWindow"]
@@ -207,7 +226,6 @@ layout_mode = 2
 text = "Start Timer"
 
 [node name="EditTagWindow" type="VBoxContainer" parent="."]
-visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="EditTagWindow"]
@@ -237,7 +255,15 @@ expand_icon = true
 [node name="TagCatTree" type="Tree" parent="EditTagWindow"]
 layout_mode = 2
 size_flags_vertical = 3
+theme = SubResource("Theme_m7h58")
+theme_override_colors/children_hl_line_color = Color(0.621524, 0.621524, 0.621524, 1)
+theme_override_colors/parent_hl_line_color = Color(0.619608, 0.619608, 0.619608, 1)
+theme_override_constants/inner_item_margin_right = 18
 theme_override_constants/button_margin = 6
+theme_override_constants/draw_guides = 0
+theme_override_constants/draw_relationship_lines = 1
+theme_override_constants/parent_hl_line_width = 2
+theme_override_constants/children_hl_line_width = 2
 columns = 3
 column_titles_visible = true
 hide_root = true
