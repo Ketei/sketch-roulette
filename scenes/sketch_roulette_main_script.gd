@@ -111,6 +111,7 @@ func _ready() -> void:
 	second_timer.timeout.connect(_on_second_timer_timeout)
 	new_category_btn.pressed.connect(_on_add_category_pressed)
 	add_tags_btn.pressed.connect(_on_submit_tags_pressed)
+	cancel_add_btn.pressed.connect(_on_cancel_add_tags_pressed)
 	
 	preset_opt_btn.item_selected.connect(_on_preset_selected)
 	copy_tags_btn.pressed.connect(_on_copy_tags_button_pressed)
