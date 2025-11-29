@@ -112,6 +112,7 @@ func _ready() -> void:
 	add_tags_btn.pressed.connect(_on_submit_tags_pressed)
 	
 	preset_opt_btn.item_selected.connect(_on_preset_selected)
+	copy_tags_btn.pressed.connect(_on_copy_tags_button_pressed)
 	
 	tag_cat_tree.category_erased.connect(_on_category_erased)
 	tag_cat_tree.add_tags_to_pressed.connect(_on_add_tags_to_category_pressed)
@@ -125,6 +126,10 @@ func _ready() -> void:
 	roll_tags_btn.pressed.connect(_on_roll_for_tags_pressed)
 	
 	erase_preset_btn.pressed.connect(_on_erase_preset_pressed)
+
+
+func _on_copy_tags_button_pressed() -> void:
+	DisplayServer.clipboard_set(selected_tags_txt_edt.text)
 
 
 func _on_category_prio_changed(category: StringName, priority: int) -> void:
