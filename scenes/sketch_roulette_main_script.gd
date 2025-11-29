@@ -422,7 +422,7 @@ func _on_save_as_preset_pressed() -> void:
 			preset_opt_btn.set_item_metadata(-1, item)
 		
 		preset_opt_btn.select(sorted_uuids.find(uuid) + 2)
-		
+		erase_preset_btn.disabled = false
 	dialog.queue_free()
 
 
