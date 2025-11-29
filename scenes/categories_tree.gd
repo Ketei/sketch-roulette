@@ -101,7 +101,6 @@ func add_category(category_id: StringName, title: String, priority: int = 0, che
 	
 	new_category.set_text(0, title)
 	new_category.set_checked(0, checked)
-	new_category.set_tooltip_text(0, "Include Category.")
 	new_category.set_range_config(1, -1000.0, 1000.0, 1.0)
 	new_category.set_tooltip_text(1, "Tags Priority.")
 	new_category.set_range_config(2, 0.0, total_items, 1.0)
@@ -144,7 +143,6 @@ func add_category(category_id: StringName, title: String, priority: int = 0, che
 			new_item.set_text_overrun_behavior(0, TextServer.OVERRUN_TRIM_ELLIPSIS)
 			new_item.set_editable(0, true)
 			new_item.set_checked(0, true)
-			new_item.set_tooltip_text(0, "Include Tag")
 			new_item.set_range_config(1, 0.0, 1000, 1.0)
 			new_item.set_range(1, data[item]["spicy"] if not tags.has(item) else tags[item][0].get_range(1))
 			new_item.set_editable(1, true)
