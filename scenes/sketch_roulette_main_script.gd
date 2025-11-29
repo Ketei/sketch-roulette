@@ -117,14 +117,20 @@ func _ready() -> void:
 	tag_cat_tree.category_erased.connect(_on_category_erased)
 	tag_cat_tree.add_tags_to_pressed.connect(_on_add_tags_to_category_pressed)
 	tag_cat_tree.tag_removed.connect(_on_tag_removed_from_category)
+	tag_cat_tree.category_prio_changed.connect(_on_category_prio_changed)
+	tag_cat_tree.spiciness_changed.connect(_on_spiciness_changed)
+	tag_cat_tree.hornyness_changed.connect(_on_hornyness_changed)
 	tags_tree.item_rerolled.connect(_on_item_rerolled)
 	save_preset_btn.pressed.connect(_on_save_as_preset_pressed)
 	
 	roll_tags_btn.pressed.connect(_on_roll_for_tags_pressed)
 	
-	tag_cat_tree.spiciness_changed.connect(_on_spiciness_changed)
-	tag_cat_tree.hornyness_changed.connect(_on_hornyness_changed)
 	erase_preset_btn.pressed.connect(_on_erase_preset_pressed)
+
+
+func _on_category_prio_changed(category: StringName, priority: int) -> void:
+	if database._categories.has(category):
+		database._categories[category]["priority"] = priority
 
 
 func _on_spiciness_changed(tag: StringName, level: int) -> void:

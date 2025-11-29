@@ -7,6 +7,7 @@ signal tag_removed(category: StringName, tag: StringName)
 signal add_tags_to_pressed(category: StringName)
 signal spiciness_changed(tag: StringName, level: int)
 signal hornyness_changed(tag: StringName, is_horny: bool)
+signal category_prio_changed(category: StringName, priority: int)
 
 enum ButtonID{
 	ERASE_CATEGORY,
@@ -39,10 +40,15 @@ func _on_item_edited() -> void:
 	var edited: TreeItem = get_edited()
 	var edited_column: int = get_edited_column()
 	if edited.get_parent() == get_root():
-		if edited_column == 0 and Input.is_key_pressed(KEY_SHIFT):
-			var active: bool = edited.is_checked(0)
-			for item in edited.get_children():
-				item.set_checked(0, active)
+		if edited_column == 0:
+			if Input.is_key_pressed(KEY_SHIFT):
+				var active: bool = edited.is_checked(0)
+				for item in edited.get_children():
+					item.set_checked(0, active)
+		elif edited_column == 1:
+			category_prio_changed.emit(
+					edited.get_metadata(0),
+					edited.get_range(1))
 		return
 	
 	if edited_column == 1:
