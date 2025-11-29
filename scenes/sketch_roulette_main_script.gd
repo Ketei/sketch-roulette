@@ -427,10 +427,7 @@ func _on_save_as_preset_pressed() -> void:
 			preset_opt_btn.add_item(existing_items[item])
 			preset_opt_btn.set_item_metadata(-1, item)
 		
-		if selected_idx < 2:
-			preset_opt_btn.select(0)
-		else:
-			preset_opt_btn.select(sorted_uuids.find(uuid))
+		preset_opt_btn.select(sorted_uuids.find(uuid))
 		
 	dialog.queue_free()
 
