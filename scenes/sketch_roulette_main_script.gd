@@ -58,6 +58,7 @@ var presets: TagPresets = TagPresets.load_or_new()
 
 
 func _ready() -> void:
+	get_window().min_size = Vector2i(450, 600)
 	var preset_keys: Array[StringName] = []
 	preset_keys.assign(presets.presets.keys())
 	preset_keys.sort_custom(presets.sort_custom_name)
