@@ -405,7 +405,6 @@ func _on_save_as_preset_pressed() -> void:
 	var result: Array = await dialog.dialog_finished
 	
 	if result[0]:
-		var selected_idx: int = preset_opt_btn.selected
 		var uuid: StringName = presets.create_preset(result[1], tag_cat_tree.get_for_preset())
 		var existing_items: Dictionary[StringName, String] = {}
 		var sorted_uuids: Array[StringName] = []
