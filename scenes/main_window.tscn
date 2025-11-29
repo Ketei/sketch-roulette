@@ -66,7 +66,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_tyee0")
 script = ExtResource("1_ax7xg")
 
 [node name="MainWindow" type="VBoxContainer" parent="."]
-visible = false
 layout_mode = 2
 
 [node name="Title" type="Label" parent="MainWindow"]
@@ -226,6 +225,7 @@ layout_mode = 2
 text = "Start Timer"
 
 [node name="EditTagWindow" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="EditTagWindow"]
