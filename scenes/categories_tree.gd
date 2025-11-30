@@ -81,10 +81,16 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_inde
 		category_erased.emit(item.get_metadata(0))
 		item.free()
 	elif id == ButtonID.ERASE_TAG:
+		var parent: TreeItem = item.get_parent()
+		var current_items: int = parent.get_child_count()
 		if tags.has(item.get_metadata(0)):
 			tags[item.get_metadata(0)].erase(item)
 		if tags[item.get_metadata(0)].is_empty():
 			tags.erase(item.get_metadata(0))
+		
+		parent.set_range_config(2, 0, current_items - 1, 1.0)
+		if current_items - 1 < parent.get_range(2):
+			parent.set_range(2, current_items - 1)
 		tag_removed.emit(item.get_parent().get_metadata(0), item.get_metadata(0))
 		item.free()
 	elif id == ButtonID.NEW_TAG:
