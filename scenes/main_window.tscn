@@ -278,6 +278,7 @@ custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 
 [node name="OverwritePresetBtn" type="Button" parent="EditTagWindow/HBoxContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 text = "Overwrite Preset"
 
