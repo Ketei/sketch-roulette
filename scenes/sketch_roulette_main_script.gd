@@ -201,7 +201,7 @@ func _on_submit_tags_pressed() -> void:
 		var tag_id: StringName = &""
 		if database.has_tag(new_tag):
 			tag_id = database.get_tag_id(new_tag)
-			nsfw = database._tags[new_tag]["nsfw"]
+			nsfw = database._tags[tag_id]["nsfw"]
 			database.add_tag_to_category(tag_id, _selected_category_id, true)
 		else:
 			tag_id = database.add_tag(new_tag, 0, nsfw, _selected_category_id, true)
