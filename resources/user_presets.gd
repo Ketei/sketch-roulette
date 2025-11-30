@@ -44,6 +44,17 @@ func create_preset(preset_name: String, data: Dictionary[StringName, Dictionary]
 	return uuid
 
 
+func set_preset_data(preset_id: StringName, data: Dictionary[StringName, Dictionary]) -> void:
+	if presets.has(preset_id):
+		presets[preset_id]["categories"].clear()
+		presets[preset_id]["categories"].assign(data.duplicate(true))
+
+
+func set_preset_name(preset_id: StringName, new_name: String) -> void:
+	if presets.has(preset_id):
+		presets[preset_id]["name"] = new_name
+
+
 func erase_preset(preset_id: StringName) -> void:
 	presets.erase(preset_id)
 

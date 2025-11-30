@@ -37,7 +37,8 @@ var presets: TagPresets = TagPresets.load_or_new()
 # Tags Window
 @onready var new_category_btn: Button = $EditTagWindow/Label/NewCategoryBtn
 @onready var tag_cat_tree: CategoriesTree = $EditTagWindow/TagCatTree
-@onready var save_preset_btn: Button = $EditTagWindow/HBoxContainer/SavePresetBtn
+@onready var save_preset_btn: Button = $EditTagWindow/HBoxContainer/VBoxContainer/SavePresetBtn
+@onready var overwrite_preset_btn: Button = $EditTagWindow/HBoxContainer/VBoxContainer/OverwritePresetBtn
 @onready var done_btn: Button = $EditTagWindow/HBoxContainer/DoneBtn
 
 # Tag add window
@@ -115,6 +116,7 @@ func _ready() -> void:
 	
 	preset_opt_btn.item_selected.connect(_on_preset_selected)
 	copy_tags_btn.pressed.connect(_on_copy_tags_button_pressed)
+	overwrite_preset_btn.pressed.connect(_on_overwrite_preset_pressed)
 	
 	tag_cat_tree.category_erased.connect(_on_category_erased)
 	tag_cat_tree.add_tags_to_pressed.connect(_on_add_tags_to_category_pressed)
@@ -128,6 +130,12 @@ func _ready() -> void:
 	roll_tags_btn.pressed.connect(_on_roll_for_tags_pressed)
 	
 	erase_preset_btn.pressed.connect(_on_erase_preset_pressed)
+
+
+func _on_overwrite_preset_pressed() -> void:
+	if preset_opt_btn.selected < 2:
+		return
+	presets.set_preset_data(preset_opt_btn.get_selected_metadata(), tag_cat_tree.get_for_preset())
 
 
 func _on_copy_tags_button_pressed() -> void:
@@ -378,6 +386,7 @@ func _on_item_rerolled(from_category: StringName, id: StringName, item: TreeItem
 
 func _on_preset_selected(idx: int) -> void:
 	erase_preset_btn.disabled = idx < 2
+	overwrite_preset_btn.visible = 1 < idx
 	
 	if idx < 2:
 		return
@@ -430,6 +439,7 @@ func _on_save_as_preset_pressed() -> void:
 		
 		preset_opt_btn.select(sorted_uuids.find(uuid) + 2)
 		erase_preset_btn.disabled = false
+		overwrite_preset_btn.visible = true
 	dialog.queue_free()
 
 
@@ -438,6 +448,7 @@ func _on_erase_preset_pressed() -> void:
 	preset_opt_btn.remove_item(preset_opt_btn.selected)
 	preset_opt_btn.select(0)
 	erase_preset_btn.disabled = true
+	overwrite_preset_btn.visible = false
 
 
 func _notification(what: int) -> void:
