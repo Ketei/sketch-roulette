@@ -27,6 +27,7 @@ func _init() -> void:
 	_dialog_line = LineEdit.new()
 	_dialog_line.custom_minimum_size.y = 32.0
 	_dialog_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_dialog_line.caret_blink = true
 	size = Vector2i(250, 89)
 	initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_MAIN_WINDOW_SCREEN
 
@@ -94,7 +95,12 @@ func grab_text_focus() -> void:
 
 func set_line_text(text: String) -> void:
 	_dialog_line.text = text
+	_ok_button.disabled = true if use_blacklist and text_blacklist.has(text) else false
 
 
 func select_all_text() -> void:
 	_dialog_line.select_all()
+
+
+func caret_to_end() -> void:
+	_dialog_line.caret_column = _dialog_line.text.length()
