@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmbr0sfkf54tq"]
+[gd_scene load_steps=18 format=3 uid="uid://bmbr0sfkf54tq"]
 
 [ext_resource type="Script" uid="uid://bqk7a0kl6l0jj" path="res://scenes/sketch_roulette_main_script.gd" id="1_ax7xg"]
+[ext_resource type="Texture2D" uid="uid://cr1b31kln03qo" path="res://icons/export_icon.svg" id="2_c4u0h"]
 [ext_resource type="Texture2D" uid="uid://dtyrj12ky41iu" path="res://icons/edit_icon.svg" id="2_exmdq"]
 [ext_resource type="Script" uid="uid://cmsanqwtm4t3l" path="res://scenes/tags_tree_script.gd" id="3_6aa16"]
 [ext_resource type="Texture2D" uid="uid://btuqksudx8clh" path="res://icons/trash_bin.svg" id="3_j4oxs"]
@@ -61,6 +62,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 theme = SubResource("Theme_c4u0h")
 theme_override_styles/panel = SubResource("StyleBoxFlat_tyee0")
 script = ExtResource("1_ax7xg")
@@ -235,6 +237,21 @@ text = "Categories & Tags"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ExportDBBtn" type="Button" parent="EditTagWindow/Label"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -16.0
+offset_right = 32.0
+offset_bottom = 16.0
+grow_vertical = 2
+tooltip_text = "Export database"
+icon = ExtResource("2_c4u0h")
+flat = true
+icon_alignment = 1
+
 [node name="NewCategoryBtn" type="Button" parent="EditTagWindow/Label"]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 1
@@ -280,6 +297,8 @@ layout_mode = 2
 [node name="OverwritePresetBtn" type="Button" parent="EditTagWindow/HBoxContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
+tooltip_text = "Click: Overwrite selected pressed.
+Shift + Click: Rename selected preset and overwrite."
 text = "Overwrite Preset"
 
 [node name="SavePresetBtn" type="Button" parent="EditTagWindow/HBoxContainer/VBoxContainer"]
@@ -309,7 +328,18 @@ placeholder_text = "Add tags...
 One line per tag."
 wrap_mode = 1
 
-[node name="AddAsNSFWChkBx" type="CheckBox" parent="AddTags"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="AddTags"]
+layout_mode = 2
+alignment = 2
+
+[node name="AddEnabled" type="CheckBox" parent="AddTags/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 2
+tooltip_text = "Adds the tags enabled."
+button_pressed = true
+text = "Enabled"
+
+[node name="AddAsNSFWChkBx" type="CheckBox" parent="AddTags/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 8
 text = "As NSFW"

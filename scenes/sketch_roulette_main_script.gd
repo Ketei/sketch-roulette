@@ -32,6 +32,7 @@ var presets: TagPresets = TagPresets.load_or_new()
 @onready var sec_spn_bx: SpinBox = $MainWindow/VBoxContainer/HBoxContainer3/SecondContainer/SecSpnBx
 @onready var start_timer_btn: Button = $MainWindow/StartTimerBtn
 @onready var erase_preset_btn: Button = $MainWindow/HBoxContainer3/ErasePresetBtn
+@onready var export_db_btn: Button = $EditTagWindow/Label/ExportDBBtn
 
 
 # Tags Window
@@ -45,8 +46,8 @@ var presets: TagPresets = TagPresets.load_or_new()
 @onready var tags_txt_edt: TextEdit = $AddTags/TagsTxtEdt
 @onready var cancel_add_btn: Button = $AddTags/HBoxContainer/CancelAddBtn
 @onready var add_tags_btn: Button = $AddTags/HBoxContainer/AddTagsBtn
-@onready var add_as_nsfw_chk_bx: CheckBox = $AddTags/AddAsNSFWChkBx
-
+@onready var add_as_nsfw_chk_bx: CheckBox = $AddTags/HBoxContainer2/AddAsNSFWChkBx
+@onready var add_enabled: CheckBox = $AddTags/HBoxContainer2/AddEnabled
 
 # Timer window
 @onready var copy_tags_btn: Button = $CountdownContainer/VBoxContainer/Label/CopyTagsBtn
@@ -59,6 +60,7 @@ var presets: TagPresets = TagPresets.load_or_new()
 
 
 func _ready() -> void:
+	get_window().title = "SketchRoulette - " + ProjectSettings.get_setting("application/config/version")
 	get_window().min_size = Vector2i(450, 600)
 	var preset_keys: Array[StringName] = []
 	preset_keys.assign(presets.presets.keys())
@@ -124,17 +126,168 @@ func _ready() -> void:
 	tag_cat_tree.category_prio_changed.connect(_on_category_prio_changed)
 	tag_cat_tree.spiciness_changed.connect(_on_spiciness_changed)
 	tag_cat_tree.hornyness_changed.connect(_on_hornyness_changed)
+	tag_cat_tree.category_name_changed.connect(_on_category_name_changed)
 	tags_tree.item_rerolled.connect(_on_item_rerolled)
 	save_preset_btn.pressed.connect(_on_save_as_preset_pressed)
 	
 	roll_tags_btn.pressed.connect(_on_roll_for_tags_pressed)
 	
 	erase_preset_btn.pressed.connect(_on_erase_preset_pressed)
+	export_db_btn.pressed.connect(_on_export_db_pressed)
+	get_window().files_dropped.connect(_on_files_dropped)
+
+
+func _on_category_name_changed(category: StringName, new_name: String) -> void:
+	if database._categories.has(category):
+		database._categories[category]["name"] = new_name
+
+
+func _on_files_dropped(files: PackedStringArray) -> void:
+	if files.is_empty():
+		return
+	
+	if files[0].get_extension() != "json":
+		return
+	
+	var file: String = FileAccess.get_file_as_string(files[0])
+	
+	if file.is_empty() or FileAccess.get_open_error() != OK:
+		return
+	
+	var json: JSON = JSON.new()
+	
+	if json.parse(file) != OK or typeof(json.data) != TYPE_DICTIONARY:
+		return
+	
+	var data: Dictionary = json.data.duplicate(true)
+	
+	if not data.has_all(["tags", "categories"]) or typeof(data["tags"]) != TYPE_ARRAY or typeof(data["categories"]) != TYPE_ARRAY:
+		return
+	
+	for item in data["tags"]:
+		if typeof(item) != TYPE_DICTIONARY or not item.has_all(["tag", "spicy", "nsfw"]) or typeof(item["tag"]) != TYPE_STRING or typeof(item["spicy"]) not in [TYPE_FLOAT, TYPE_INT] or typeof(item["nsfw"]) != TYPE_BOOL:
+			continue
+		
+		if database.has_tag(item["tag"]):
+			continue
+		
+		database.add_tag(item["tag"], item["spicy"], item["nsfw"])
+	
+	for item in data["categories"]:
+		if typeof(item) != TYPE_DICTIONARY or not item.has_all(["title", "priority", "tags"]) or typeof(item["title"]) != TYPE_STRING or typeof(item["priority"]) not in [TYPE_FLOAT, TYPE_INT] or typeof(item["tags"]) != TYPE_ARRAY:
+			continue
+		
+		var category_exists: bool = database.has_category_with_title(item["title"])
+		var cat_id: StringName = database.get_category_with_title(item["title"]) if category_exists else database.add_category(item["title"], item["priority"])
+		var category_data: Dictionary[StringName, Dictionary] = {}
+		
+		for tag_item in item["tags"]:
+			if typeof(tag_item) != TYPE_STRING or not database.has_tag(tag_item):
+				continue
+			var tag_id: StringName = database.get_tag_id(tag_item)
+			database.add_tag_to_category(
+				tag_id,
+				cat_id,
+				true)
+			
+			category_data[tag_id] = {
+				"tag": tag_item,
+				"spicy": database._tags[tag_id]["spicy"],
+				"nsfw": database._tags[tag_id]["nsfw"]}
+		
+		if category_exists:
+			tag_cat_tree.add_items_to_category(
+				cat_id,
+				category_data)
+		else:
+			tag_cat_tree.add_category(
+					cat_id,
+					database.get_category_name(cat_id),
+					database.get_category_priority(cat_id),
+					true,
+					false,
+					category_data)
+	
+	var notif: AcceptDialog = preload("res://scripts/notification_dialog.gd").new()
+	notif.title = "Success"
+	notif.dialog_text = "Data imported successfully."
+	notif.ok_button_text = "Done"
+	notif.size = Vector2i(230, 100)
+	notif.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_PRIMARY_SCREEN
+	add_child(notif)
+	notif.show()
+	await notif.dialog_finished
+	notif.queue_free()
+
+
+func _on_export_db_pressed() -> void:
+	var exporter: FileDialog = preload("res://scripts/exporter_file_dialog.gd").new()
+	add_child(exporter)
+	exporter.show()
+	
+	var result: Array = await exporter.path_selected
+	
+	exporter.queue_free()
+	
+	if not result[0]:
+		return
+	
+	var tags: Array = []
+	var categories: Array = []
+	var json_data: Dictionary = {}
+	
+	for tag_id in database.tags():
+		tags.append({
+			"tag": database._tags[tag_id]["tag"],
+			"spicy": database._tags[tag_id]["spicy"],
+			"nsfw": database._tags[tag_id]["nsfw"]})
+	
+	for category_id in database.categories():
+		var cat_tags: Array = []
+		for tag_id in database._categories[category_id]["tags"]:
+			cat_tags.append(database._tags[tag_id]["tag"])
+		
+		categories.append({
+			"title": database._categories[category_id]["name"],
+			"priority": database._categories[category_id]["priority"],
+			"tags": cat_tags})
+	
+	json_data["tags"] = tags
+	json_data["categories"] = categories
+	
+	var string_data: String = JSON.stringify(json_data, "\t")
+	
+	var new_file: FileAccess = FileAccess.open(result[1], FileAccess.WRITE)
+	new_file.store_string(string_data)
+	new_file.close()
 
 
 func _on_overwrite_preset_pressed() -> void:
 	if preset_opt_btn.selected < 2:
 		return
+	
+	if Input.is_key_pressed(KEY_SHIFT):
+		var ln: ConfirmationDialog = preload("res://scripts/line_edit_confirmation_dialog.gd").new()
+		ln.title = "Rename preset..."
+		ln.line_placeholder_text = "Preset name"
+		add_child(ln)
+		ln.show()
+		ln.grab_text_focus()
+		ln.set_line_text(preset_opt_btn.get_item_text(preset_opt_btn.selected))
+		ln.caret_to_end()
+		ln.select_all_text()
+		
+		var result: Array = await ln.dialog_finished
+		
+		if result[0] and result[1] != preset_opt_btn.get_item_text(preset_opt_btn.selected):
+			preset_opt_btn.set_item_text(preset_opt_btn.selected, result[1])
+			presets.set_preset_name(preset_opt_btn.get_selected_metadata(), result[1])
+		
+		ln.queue_free()
+		
+		if result[0] == false:
+			return
+	
 	presets.set_preset_data(preset_opt_btn.get_selected_metadata(), tag_cat_tree.get_for_preset())
 
 
@@ -202,15 +355,15 @@ func _on_submit_tags_pressed() -> void:
 		if database.has_tag(new_tag):
 			tag_id = database.get_tag_id(new_tag)
 			nsfw = database._tags[tag_id]["nsfw"]
-			database.add_tag_to_category(tag_id, _selected_category_id, true)
+			database.add_tag_to_category(tag_id, _selected_category_id, add_enabled.button_pressed)
 		else:
-			tag_id = database.add_tag(new_tag, 0, nsfw, _selected_category_id, true)
+			tag_id = database.add_tag(new_tag, 0, nsfw, _selected_category_id, add_enabled.button_pressed)
 		new_items[tag_id] = new_tag
 	
 	tag_cat_tree.add_to_category(
 		_selected_category_id,
 		new_items,
-		true,
+		add_enabled.button_pressed,
 		nsfw)
 	
 	_selected_category_id = &""
@@ -223,6 +376,9 @@ func _on_add_category_pressed() -> void:
 	dialog.title = "New Category..."
 	dialog.ok_button_text = "Add Category"
 	dialog.cancel_button_text = "Cancel"
+	dialog.use_blacklist = true
+	dialog.allow_empty = false
+	dialog.text_blacklist.assign(tag_cat_tree.get_categories_titles())
 	add_child(dialog)
 	dialog.show()
 	dialog.grab_text_focus()
