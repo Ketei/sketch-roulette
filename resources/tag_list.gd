@@ -182,6 +182,20 @@ func add_tag_to_category(tag: StringName, category: StringName, checked: bool) -
 	_categories[category]["tags"][tag] = checked
 
 
+func get_category_with_title(title: String) -> StringName:
+	for cat_id in _categories.keys():
+		if _categories[cat_id]["name"] == title:
+			return cat_id
+	return &""
+
+
+func has_category_with_title(title: String) -> bool:
+	for cat_id in _categories.keys():
+		if _categories[cat_id]["name"] == title:
+			return true
+	return false
+
+
 func erase_category(group_id: StringName) -> void:
 	_categories.erase(group_id)
 

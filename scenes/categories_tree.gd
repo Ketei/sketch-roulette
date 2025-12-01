@@ -8,11 +8,13 @@ signal add_tags_to_pressed(category: StringName)
 signal spiciness_changed(tag: StringName, level: int)
 signal hornyness_changed(tag: StringName, is_horny: bool)
 signal category_prio_changed(category: StringName, priority: int)
+signal category_name_changed(category: StringName, new_name: String)
 
 enum ButtonID{
 	ERASE_CATEGORY,
 	ERASE_TAG,
 	NEW_TAG,
+	RENAME_CATEGORY,
 }
 
 var column_pressed: int = 0
@@ -26,12 +28,12 @@ func _ready() -> void:
 	set_column_title(2, "Amount")
 	
 	set_column_expand(0, true)
-	set_column_expand(1, true)
+	set_column_expand(1, false)
 	set_column_expand(2, true)
 	
-	set_column_expand_ratio(0, 2)
+	set_column_expand_ratio(0, 4)
 	set_column_expand_ratio(1, 1)
-	set_column_expand_ratio(2, 1)
+	set_column_expand_ratio(2, 2)
 	button_clicked.connect(_on_button_clicked)
 	item_edited.connect(_on_item_edited)
 
@@ -95,6 +97,35 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_inde
 		item.free()
 	elif id == ButtonID.NEW_TAG:
 		add_tags_to_pressed.emit(item.get_metadata(0))
+	elif id == ButtonID.RENAME_CATEGORY:
+		var titles: Array[String] = []
+		
+		for existing_item in get_root().get_children():
+			if existing_item == item:
+				continue
+			titles.append(existing_item.get_text(0))
+		
+		var name_changer: ConfirmationDialog = preload("res://scripts/line_edit_confirmation_dialog.gd").new()
+		name_changer.title = "Rename Category..."
+		name_changer.line_placeholder_text = "Category Name"
+		name_changer.allow_empty = false
+		name_changer.use_blacklist = true
+		name_changer.text_blacklist.assign(titles)
+		add_child(name_changer)
+		name_changer.set_line_text(item.get_text(0))
+		name_changer.show()
+		name_changer.grab_text_focus()
+		name_changer.caret_to_end()
+		name_changer.select_all_text()
+		
+		var result: Array = await name_changer.dialog_finished
+		
+		if result[0] and result[1] != item.get_text(0):
+			item.set_text(0, result[1])
+			sort_single_item(item, 0)
+			category_name_changed.emit(item.get_metadata(0), result[1])
+		
+		name_changer.queue_free()
 
 
 func add_category(category_id: StringName, title: String, priority: int = 0, checked: bool = false, focus: bool = false, data: Dictionary[StringName, Dictionary] = {}) -> void:
@@ -118,6 +149,13 @@ func add_category(category_id: StringName, title: String, priority: int = 0, che
 	new_category.set_editable(2, true)
 	
 	new_category.set_range(1, priority)
+	
+	new_category.add_button(
+			0,
+			preload("res://icons/edit_icon_mini.svg"),
+			ButtonID.RENAME_CATEGORY,
+			false,
+			"Rename Category")
 	
 	new_category.add_button(
 			2,
@@ -201,6 +239,7 @@ func add_to_category(category: StringName, items: Dictionary[StringName, String]
 		return
 	
 	var existing: Array[StringName] = []
+	var increase_size: bool = category_item.get_child_count() == category_item.get_range(2)
 	for item in category_item.get_children():
 		existing.append(item.get_metadata(0))
 	
@@ -240,7 +279,63 @@ func add_to_category(category: StringName, items: Dictionary[StringName, String]
 		tags[item_id].append(new_item)
 	
 	category_item.set_range_config(2, 0.0, float(category_item.get_child_count()), 1.0)
-	category_item.set_range(2, category_item.get_range(2) + items.size())
+	if increase_size:
+		category_item.set_range(2, category_item.get_range(2) + items.size())
+
+
+func add_items_to_category(category: StringName, items: Dictionary[StringName, Dictionary], selected: bool = true) -> void:
+	var category_item: TreeItem = null
+	
+	for category_tree in get_root().get_children():
+		if category_tree.get_metadata(0) == category:
+			category_item = category_tree
+			break
+	
+	if category_item == null:
+		return
+	
+	var existing: Array[StringName] = []
+	var increase_size: bool = category_item.get_child_count() == category_item.get_range(2)
+	for item in category_item.get_children():
+		existing.append(item.get_metadata(0))
+	
+	for item_id in items.keys():
+		if existing.has(item_id):
+			continue
+		var new_item: TreeItem = category_item.create_child()
+		
+		new_item.set_cell_mode(0, TreeItem.CELL_MODE_CHECK)
+		new_item.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
+		new_item.set_cell_mode(2, TreeItem.CELL_MODE_CHECK)
+		
+		new_item.set_text(0, items[item_id]["tag"])
+		new_item.set_text_overrun_behavior(0, TextServer.OVERRUN_TRIM_ELLIPSIS)
+		new_item.set_editable(0, true)
+		new_item.set_checked(0, selected)
+		new_item.set_tooltip_text(0, "Include Tag")
+		new_item.set_range_config(1, 0.0, 1000, 1.0)
+		new_item.set_range(1, items[item_id]["spicy"] if not tags.has(item_id) else tags[item_id][0].get_range(1))
+		new_item.set_editable(1, true)
+		new_item.set_tooltip_text(1, "Spiciness Level")
+		new_item.set_text(2, "NSFW")
+		new_item.set_editable(2, true)
+		new_item.set_checked(2, items[item_id]["nsfw"] if not tags.has(item_id) else tags[item_id][0].is_checked(2))
+		new_item.add_button(
+				2,
+				preload("res://icons/trash_bin.svg"),
+				ButtonID.ERASE_TAG,
+				false,
+				"Remove Tag")
+		new_item.set_metadata(0, item_id)
+		sort_single_item(new_item, 0)
+		
+		if not tags.has(item_id):
+			var new_data: Array[TreeItem] = []
+			tags[item_id] = new_data
+		tags[item_id].append(new_item)
+	category_item.set_range_config(2, 0.0, float(category_item.get_child_count()), 1.0)
+	if increase_size:
+		category_item.set_range(2, category_item.get_child_count())
 
 
 func set_category(category_id: StringName, enabled: bool, pick_count: int) -> void:
@@ -334,3 +429,10 @@ func get_for_save() -> Dictionary[StringName, Dictionary]:
 		cats[item.get_metadata(0)] = tags_data
 	
 	return cats
+
+
+func get_categories_titles() -> Array[String]:
+	var titles: Array[String] = []
+	for item in get_root().get_children():
+		titles.append(item.get_text(0))
+	return titles
