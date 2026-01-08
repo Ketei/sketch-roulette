@@ -1134,10 +1134,7 @@ func _on_preset_saved(preset_id: int, preset_name: String, format_template: Stri
 				abort_msg = "Tag Trigger Groups Refresh"
 			
 			var triggers: Array[int] = active_preset.get_trigger_groups(group_id, tag_id)
-			var new_rows: Array[Dictionary] = []
 			for target_group_id in triggers:
-				var values: String = str("(", tag_id, ",", group_id, ",", target_group_id, ")")
-				
 				database.insert_row(
 						"tag_triggers_groups",
 						{
