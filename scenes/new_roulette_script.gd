@@ -80,8 +80,8 @@ var _dirty_trigger_pairs: Dictionary[int, Dictionary] = {}
 @onready var return_btn: Button = $CountdownContainer/HBoxContainer2/ReturnBtn
 @onready var time_label: Label = $CountdownContainer/HBoxContainer/TimeLabel
 @onready var total_time_label: Label = $CountdownContainer/HBoxContainer/TotalTimeLabel
-#@onready var selected_tags_txt_edt: TextEdit = $CountdownContainer/VBoxContainer/PanelContainer/SelectedTagsTxtEdt
 @onready var selected_tags_rtl: RichTextLabel = $CountdownContainer/VBoxContainer/PanelContainer/SeletedTagsRTL
+@onready var copy_tags_btn: Button = $CountdownContainer/VBoxContainer/Label/CopyTagsBtn
 
 # -------------
 
@@ -464,7 +464,6 @@ func parse_prompt_template(template_string: String) -> Dictionary:
 	var processed_string: String = ""
 	
 	var draw_task: Array[Dictionary] = []
-	var draw_override: int = -1
 	
 	var last_pos: int = 0
 	var idx: int = -1
@@ -474,13 +473,19 @@ func parse_prompt_template(template_string: String) -> Dictionary:
 	for result in rgx.search_all(template_string):
 		var result_parts: PackedStringArray = result.get_string().trim_prefix("{").trim_suffix("}").split(":", false)
 		var include_chance: float = 100.0
+		var draw_override: int = -1
+		var tag_name: String = ""
 		
 		if 1 < result_parts.size(): # We have arguments
 			for part in result_parts:
-				if part.ends_with("%"): # It's a draw chance
-					include_chance = part.to_float()
+				if part.ends_with("%"):
+					if part.trim_suffix("%").is_valid_float(): # It's a draw chance
+						include_chance = part.trim_suffix("%").to_float()
 				else:
-					draw_override = part.to_int()
+					if part.is_valid_float():
+						draw_override = part.to_int()
+					elif result_parts[1] == part:
+						tag_name = part
 			
 			# Correction
 			if draw_override <= 0:
@@ -493,10 +498,16 @@ func parse_prompt_template(template_string: String) -> Dictionary:
 		
 		var group_name: String = result_parts[0]
 		
-		draw_task.append({
-			"group_name": group_name,
-			"count": draw_override,
-			"chance": include_chance})
+		if group_name.begins_with("!"): # Ignore draw override
+			draw_task.append({
+				"group_name": group_name.trim_prefix("!"),
+				"chance": include_chance,
+				"tag_name": tag_name})
+		else:
+			draw_task.append({
+				"group_name": group_name,
+				"count": draw_override,
+				"chance": include_chance})
 		
 		last_pos = result.get_end()
 	
@@ -1317,8 +1328,8 @@ func _on_timer_label_meta_clicked(meta: Variant) -> void:
 		var extension: String = url.get_extension()
 		
 		if extension in ["exe", "bat", "sh", "msi", "cmd"]:
-			push_error("WARNING: Execution of binaries is prohibited.")
-			return # Security issue. Print something
+			push_error("WARNING: Execution of binaries is prohibited. Stopped ", url, " from executing.")
+			return
 		elif not extension.is_empty():
 			if FileAccess.file_exists(url):
 				OS.shell_open(url) # Should be safe files now.
@@ -1370,7 +1381,9 @@ func _on_roll_for_tags_pressed() -> void:
 		group_priorities.append(result["id"])
 	#{
 		#"format_string": "{0} {1}",
-		#"tasks": [{"group_name": "n", "count": 1, "chance": 100.0}]}
+		#"tasks": [
+			#{"group_name": "n", "count": 1, "chance": 100.0}],
+			#["group_name": "y", "chance": 50.0, "tag_name": "a"]}
 	var template_data: Dictionary = parse_prompt_template(roll_set_up_window.get_prompt())
 	
 	prompt_tags_tree.target_prompt = template_data["format_string"]
@@ -1380,37 +1393,69 @@ func _on_roll_for_tags_pressed() -> void:
 	var task_idx: int = -1
 	for task in template_data["tasks"]:
 		task_idx += 1
-		if not group_map.has(task["group_name"]) or task["count"] == 0:
-			prompt_tags_tree.add_tag("", -1, -1, task_idx)
-			continue
-		
-		var group_id: int = group_map[task["group_name"]]
-		# task.count == -1 -> Use the defined amount on the preset
-		if task["chance"] < 100.0:
-			if task["chance"] <= 0:
+		if task.has("count"):
+			if not group_map.has(task["group_name"]) or task["count"] == 0:
 				prompt_tags_tree.add_tag("", -1, -1, task_idx)
 				continue
-			else:
-				var chance_roll: float = randf_range(1.0, 100.0)
-				if task["chance"] < chance_roll:
+			
+			var group_id: int = group_map[task["group_name"]]
+			# task.count == -1 -> Use the defined amount on the preset
+			if task["chance"] < 100.0:
+				if task["chance"] <= 0:
 					prompt_tags_tree.add_tag("", -1, -1, task_idx)
 					continue
+				else:
+					var chance_roll: float = randf_range(0.0, 100.0)
+					if task["chance"] < chance_roll:
+						prompt_tags_tree.add_tag("", -1, -1, task_idx)
+						continue
 		
-		var picked_items: Array[Dictionary] = possible_tags.pick_from_group_pool(
-				group_id,
-				active_preset.get_draw_count(group_id) if task["count"] < 0 else task["count"])
+			var picked_items: Array[Dictionary] = possible_tags.pick_from_group_pool(
+					group_id,
+					active_preset.get_draw_count(group_id) if task["count"] < 0 else task["count"])
 		
-		if picked_items.is_empty():
-			prompt_tags_tree.add_tag("", -1, -1, task_idx)
+			if picked_items.is_empty():
+				prompt_tags_tree.add_tag("", -1, -1, task_idx)
+			else:
+				for tag_dict in picked_items:
+					prompt_tags_tree.add_tag(
+							tag_dict["name"],
+							tag_dict["id"],
+							group_id,
+							task_idx)#items[item_id], item_id, group_id, task_idx)
+			used_groups[group_map[task["group_name"]]] = true
 		else:
-			for tag_dict in picked_items:
-				prompt_tags_tree.add_tag(
-						tag_dict["name"],
-						tag_dict["id"],
-						group_id,
-						task_idx)#items[item_id], item_id, group_id, task_idx)
+			var group_id: int = -1
+			var tag_id: int = -1
+			
+			if not group_map.has(task["group_name"]):
+				group_id = roll_set_up_window.get_group_id_by_name(task["group_name"])
+			else:
+				group_id = group_map[task["group_name"]]
+			
+			tag_id = roll_set_up_window.get_tag_id_by_name_and_group(group_id, task["tag_name"])
+			
+			if group_id == -1 or tag_id == -1:
+				prompt_tags_tree.add_tag("", -1, -1, task_idx)
+				continue
+			elif task["chance"] < 100.0:
+				if task["chance"] <= 0:
+					prompt_tags_tree.add_tag("", -1, -1, task_idx)
+					continue
+				else:
+					var chance_roll: float = randf_range(0.0, 100.0)
+					if task["chance"] < chance_roll:
+						prompt_tags_tree.add_tag("", -1, -1, task_idx)
+						continue
 		
-		used_groups[group_map[task["group_name"]]] = true #amount_to_draw[group_map[task["group_name"]]] - 1
+			prompt_tags_tree.add_tag(
+					task["tag_name"],
+					tag_id,
+					group_id,
+					task_idx,
+					false)
+			
+			used_groups[group_id] = true
 	
 	for group_id in group_priorities:
 		if group_modes[group_id] != 0 or used_groups[group_id]:

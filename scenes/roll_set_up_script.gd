@@ -32,6 +32,23 @@ func _ready() -> void:
 	save_preset_btn.pressed.connect(_on_save_preset_pressed)
 
 
+func get_tag_id_by_name_and_group(group_id: int, tag_name: String) -> int:
+	if not roll_state.has(group_id):
+		return -1
+	
+	for tag_dict in roll_state[group_id]["tags"]:
+		if tag_dict["name"].nocasecmp_to(tag_name) == 0:
+			return tag_dict["id"]
+	return -1
+
+
+func get_group_id_by_name(group_name: String) -> int:
+	for id in roll_state.keys():
+		if roll_state[id]["name"] == group_name:
+			return id
+	return -1
+
+
 func is_tag_enabled(on_group: int, tag_id: int) -> bool:
 	if roll_state.has(on_group):
 		for item in roll_state[on_group]["tags"]:
@@ -116,8 +133,9 @@ func create_group_node(group_id: int, group_name: String, group_mode: int = 0) -
 	return new_group
 
 
-func create_tag_node(tag_id: int, tag_name: String, enabled: bool = true) -> CheckBox:
-	var new_tag: CheckBox = CheckBox.new()
+func create_tag_node(tag_id: int, tag_name: String, group_name: String, enabled: bool = true) -> CheckBox:
+	var new_tag: CheckBox = preload("res://scenes/tag_checkbox.gd").new()
+	new_tag.group_name = group_name
 	tags_container.add_child(new_tag)
 	new_tag.text = tag_name
 	new_tag.set_pressed_no_signal(enabled)
@@ -209,7 +227,8 @@ func add_tags_to_group(group_id: int, tags: Array[Dictionary]) -> void:
 		if sort_dict == false:
 			sort_dict = true
 		if same_group:
-			create_tag_node(new_item["id"], new_item["tag_name"], new_item["tag_enabled"])
+			var group_name: String = selected_group.get_group_name()
+			create_tag_node(new_item["id"], new_item["tag_name"], group_name, new_item["tag_enabled"])
 			if sort_nodes == false:
 				sort_nodes = true
 	
@@ -437,6 +456,7 @@ func _on_group_selected(node: Control) -> void:
 	selected_group = node
 	
 	var group_id: int = node.group_id
+	var group_name: String = node.get_group_name()
 	
 	clear_tags()
 	
@@ -444,4 +464,5 @@ func _on_group_selected(node: Control) -> void:
 		create_tag_node(
 				tag["id"],
 				tag["name"],
+				group_name,
 				tag["enabled"])

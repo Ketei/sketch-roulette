@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dmbypcaa3sikw"]
 
 [ext_resource type="Script" uid="uid://dm6jahgw3i8sp" path="res://scenes/tag_group_entry_script.gd" id="1_3fxqq"]
-[ext_resource type="Texture2D" uid="uid://btuqksudx8clh" path="res://icons/trash_bin.svg" id="4_gob6f"]
+[ext_resource type="Texture2D" uid="uid://npqh5bbjbbcr" path="res://icons/trash_bin_large.svg" id="2_uw2xu"]
 
 [node name="TagGroupEntry" type="HBoxContainer"]
 custom_minimum_size = Vector2(0, 32)
@@ -39,7 +39,6 @@ layout_mode = 2
 [node name="RemoveTagBtn" type="Button" parent="."]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-icon = ExtResource("4_gob6f")
+icon = ExtResource("2_uw2xu")
 flat = true
 icon_alignment = 1
-expand_icon = true

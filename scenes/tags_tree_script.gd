@@ -47,7 +47,7 @@ func reroll_tag(of_item: TreeItem) -> void:
 	meta["id"] = result[0]["id"]
 
 
-func add_tag(tag_text: String, id: int, group: int, group_index: int = -1) -> void:
+func add_tag(tag_text: String, id: int, group: int, group_index: int = -1, allow_reroll: bool = true) -> void:
 	var new_item: TreeItem = get_root().create_child()
 	new_item.set_text(0, tag_text)
 	new_item.set_metadata(0, {"id": id, "group": group})
@@ -55,7 +55,7 @@ func add_tag(tag_text: String, id: int, group: int, group_index: int = -1) -> vo
 			0,
 			preload("res://icons/refresh_icon.svg"),
 			0,
-			false,
+			not allow_reroll,
 			"Reroll tag")
 	new_item.visible = not tag_text.is_empty()
 	if -1 < group_index:

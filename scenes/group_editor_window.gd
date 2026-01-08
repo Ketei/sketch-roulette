@@ -67,7 +67,7 @@ func get_current_group() -> int:
 
 
 func add_tags(tags: Array[Dictionary]) -> void:
-	var update_count: bool = tag_group_container.get_child_count() == 0
+	var tag_count: int = tags.size()
 	for new_item in tags:
 		var item: TagGroupEntry = TAG_GROUP_ENTRY_SCENE.instantiate()
 		tag_group_container.add_child(item)
@@ -76,9 +76,8 @@ func add_tags(tags: Array[Dictionary]) -> void:
 		item.set_data(new_item.name, 10000, [])
 		item.remove_tag_pressed.connect(_on_remove_tag_pressed)
 		item.tag_triggers_changed.connect(_on_tag_triggers_changed)
-	select_count_spn_bx.max_value += tags.size()
-	if update_count:
-		select_count_spn_bx.set_value_no_signal(tags.size())
+	select_count_spn_bx.max_value += tag_count
+	select_count_spn_bx.set_value_no_signal(select_count_spn_bx.value + tag_count)
 
 
 func set_group_data(data: Dictionary) -> void:
