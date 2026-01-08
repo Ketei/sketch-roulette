@@ -33,6 +33,7 @@ script = SubResource("GDScript_m5uyt")
 [node name="MenuButton" type="MenuButton" parent="."]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
+theme_override_constants/icon_max_width = 18
 icon = ExtResource("3_n2xee")
 icon_alignment = 1
 item_count = 3

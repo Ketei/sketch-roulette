@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://cncc5v24hb0eu" path="res://scenes/new_roulette_script.gd" id="1_ko7eu"]
 [ext_resource type="Texture2D" uid="uid://dtyrj12ky41iu" path="res://icons/edit_icon.svg" id="1_rorgh"]
 [ext_resource type="Texture2D" uid="uid://btuqksudx8clh" path="res://icons/trash_bin.svg" id="2_ko7eu"]
-[ext_resource type="Script" uid="uid://cmsanqwtm4t3l" path="res://scenes/tags_tree_script.gd" id="3_cnyh0"]
 [ext_resource type="Texture2D" uid="uid://d4go6vncajhe" path="res://icons/gear_icon.svg" id="4_60kbw"]
 [ext_resource type="Texture2D" uid="uid://npqh5bbjbbcr" path="res://icons/trash_bin_large.svg" id="4_m5uyt"]
 [ext_resource type="Script" uid="uid://bg8p4jddfl5gr" path="res://scenes/group_editor_window.gd" id="5_60kbw"]
 [ext_resource type="Texture2D" uid="uid://b3e6c867xjaph" path="res://icons/new_folder_icon.svg" id="5_yemrx"]
+[ext_resource type="Script" uid="uid://cmsanqwtm4t3l" path="res://scenes/tags_tree_script.gd" id="6_3ouiu"]
 [ext_resource type="Texture2D" uid="uid://odhq0kmsoof3" path="res://icons/new_tag_icon.svg" id="7_cnyh0"]
 [ext_resource type="Texture2D" uid="uid://dsmluyy8xjrcu" path="res://icons/copy_icon.svg" id="7_m5uyt"]
 [ext_resource type="AudioStream" uid="uid://gi1ymi1byihj" path="res://audio/finish_sound.wav" id="8_3ouiu"]
@@ -178,7 +178,7 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 hide_root = true
-script = ExtResource("3_cnyh0")
+script = ExtResource("6_3ouiu")
 
 [node name="HSeparator5" type="HSeparator" parent="MainWindow"]
 layout_mode = 2
