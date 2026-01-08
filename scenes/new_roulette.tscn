@@ -550,6 +550,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Prompt Format"
+wrap_mode = 1
 
 [node name="HSeparator2" type="HSeparator" parent="RollSetUp"]
 layout_mode = 2
