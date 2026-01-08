@@ -2,12 +2,25 @@ class_name RollTagTree
 extends Tree
 
 
-signal item_rerolled(from_category: StringName, id: StringName, item: TreeItem)
+#signal item_rerolled(from_category: StringName, id: StringName, item: TreeItem)
+
+
+var target_prompt: String = ""
+var group_modes: Dictionary[int, int] = {} # Group ID: mode
+var tag_pool: TagPool = null
+var root: TreeItem = null
+var _groups: Dictionary[int, Array] = {} # 0: [item, item, item], 1: [item], 2: []...
+var _others: Array[TreeItem] = []
 
 
 func _ready() -> void:
-	create_item()
+	root = create_item()
 	button_clicked.connect(_on_button_clicked)
+
+
+#func _on_tag_available_toggled(is_toggled: bool, id: int) -> void:
+	#if tag_pool == null:
+		#return
 
 
 func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_index: int) -> void:
@@ -15,25 +28,71 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_inde
 		return
 	
 	if id == 0:
-		item_rerolled.emit(item.get_metadata(0)["category"], item.get_metadata(0)["id"], item)
+		reroll_tag(item)
+		#item_rerolled.emit(item.get_metadata(0)["category"], item.get_metadata(0)["id"], item)
 
 
-func add_tag(tag_text: String, id: StringName, category: StringName) -> void:
+func reroll_tag(of_item: TreeItem) -> void:
+	var meta: Dictionary = of_item.get_metadata(0)
+	var result: Array[Dictionary] = tag_pool.pick_from_group_pool(
+			meta["group"],
+			1,
+			false,
+			[meta["id"]])
+	
+	if result.is_empty():
+		return
+	
+	of_item.set_text(0, result[0]["name"])
+	meta["id"] = result[0]["id"]
+
+
+func add_tag(tag_text: String, id: int, group: int, group_index: int = -1) -> void:
 	var new_item: TreeItem = get_root().create_child()
 	new_item.set_text(0, tag_text)
-	new_item.set_metadata(0, {"id": id, "category": category})
+	new_item.set_metadata(0, {"id": id, "group": group})
 	new_item.add_button(
 			0,
 			preload("res://icons/refresh_icon.svg"),
 			0,
 			false,
 			"Reroll tag")
+	new_item.visible = not tag_text.is_empty()
+	if -1 < group_index:
+		if not _groups.has(group_index):
+			var item_array: Array[TreeItem] = []
+			_groups[group_index] = item_array
+		_groups[group_index].append(new_item)
+	else:
+		_others.append(new_item)
 
 
-func get_tags() -> Array[String]:
-	var tags: Array[String] = []
-	for item in get_root().get_children():
-		tags.append(item.get_text(0))
+func get_tags(in_format: bool) -> Array[Array]:
+	var tags: Array[Array] = []
+	if in_format:
+		var keys: Array = _groups.keys()
+		keys.sort()
+		
+		for key in keys:
+			var jobs: Array[Dictionary] = []
+			for item:TreeItem in _groups[key]:
+				var meta: Dictionary = item.get_metadata(0)
+				jobs.append({
+					"tag_name": item.get_text(0),
+					"reference": tag_pool.get_tag_reference(meta["id"]),
+					"tag_id": meta["id"],
+					"group_id": meta["group"]})
+			tags.append(jobs)
+	else:
+		var all: Array[Dictionary] = []
+		for item in _others:
+			var meta: Dictionary = item.get_metadata(0)
+			all.append({
+				"tag_name": item.get_text(0),
+				"reference": tag_pool.get_tag_reference(meta["id"]),
+				"tag_id": meta["id"],
+				"group_id": meta["group"]})
+		tags.append(all)
 	return tags
 
 
@@ -45,5 +104,7 @@ func get_tag_ids() -> Array[StringName]:
 
 
 func clear_tags() -> void:
-	for item in get_root().get_children():
-		item.free()
+	_groups.clear()
+	_others.clear()
+	root.free()
+	root = create_item()

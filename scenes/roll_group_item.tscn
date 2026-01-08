@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://cwew4xqro6drj"]
+
+[ext_resource type="Script" uid="uid://6ofw6o0bf33y" path="res://scenes/roll_group_item_script.gd" id="1_ldyje"]
+[ext_resource type="Theme" uid="uid://buo0edogbfa4m" path="res://themes/button_tree_item.tres" id="2_8v1ac"]
+[ext_resource type="Texture2D" uid="uid://cgb7oc8io67cj" path="res://icons/check_thick_icon.svg" id="3_n2xee"]
+[ext_resource type="Texture2D" uid="uid://da1m8urobooem" path="res://icons/line_icon.svg" id="4_s1xwf"]
+[ext_resource type="Texture2D" uid="uid://dkrfbmx5pqvoy" path="res://icons/cross_icon.svg" id="5_3nwrj"]
+
+[sub_resource type="GDScript" id="GDScript_m5uyt"]
+script/source = "extends Button
+
+
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	var drag_lbl: Label = Label.new()
+	drag_lbl.text = \"   \" + text
+	set_drag_preview(drag_lbl)
+	return get_meta(&\"group_format\", \"{}\")
+"
+
+[node name="RollGroupItem" type="HBoxContainer"]
+script = ExtResource("1_ldyje")
+
+[node name="GroupButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_8v1ac")
+toggle_mode = true
+text = "Group ID"
+alignment = 0
+text_overrun_behavior = 3
+script = SubResource("GDScript_m5uyt")
+
+[node name="MenuButton" type="MenuButton" parent="."]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("3_n2xee")
+icon_alignment = 1
+item_count = 3
+popup/item_0/text = "Use Group"
+popup/item_0/icon = ExtResource("3_n2xee")
+popup/item_0/id = 0
+popup/item_1/text = "Trigger Only"
+popup/item_1/icon = ExtResource("4_s1xwf")
+popup/item_1/id = 1
+popup/item_2/text = "Skip Group"
+popup/item_2/icon = ExtResource("5_3nwrj")
+popup/item_2/id = 2

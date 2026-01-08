@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=3 uid="uid://cf4awmovdqxem"]
+
+[ext_resource type="Script" uid="uid://pabaj1aig32y" path="res://scenes/tag_item_entry_script.gd" id="1_7sr8j"]
+[ext_resource type="Texture2D" uid="uid://ql6mcl8t03iq" path="res://icons/pencil_icon.svg" id="2_ygiu1"]
+[ext_resource type="Texture2D" uid="uid://x4bxfsirj01j" path="res://icons/pepper_icon.svg" id="3_nr438"]
+[ext_resource type="Texture2D" uid="uid://c65kpxloaer72" path="res://icons/link_icon.svg" id="4_ygiu1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1pywe"]
+
+[node name="TagItemEntry" type="HBoxContainer"]
+script = ExtResource("1_7sr8j")
+
+[node name="NamePanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_1pywe")
+
+[node name="NameContainer" type="HBoxContainer" parent="NamePanel"]
+layout_mode = 2
+
+[node name="EditBtn" type="Button" parent="NamePanel/NameContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("2_ygiu1")
+flat = true
+icon_alignment = 1
+
+[node name="TagLabel" type="Label" parent="NamePanel/NameContainer"]
+layout_mode = 2
+text = "Yoshi"
+horizontal_alignment = 1
+
+[node name="EditContainer" type="HBoxContainer" parent="NamePanel"]
+visible = false
+layout_mode = 2
+
+[node name="SaveBtn" type="Button" parent="NamePanel/EditContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="TagLnEdt" type="LineEdit" parent="NamePanel/EditContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpicyContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="SpicyContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("3_nr438")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SpicySpnBx" type="SpinBox" parent="SpicyContainer"]
+layout_mode = 2
+tooltip_text = "Spiciness level"
+
+[node name="NSFWCheck" type="CheckBox" parent="."]
+layout_mode = 2
+text = "NSFW"
+
+[node name="ReferenceButton" type="Button" parent="."]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Reference"
+icon = ExtResource("4_ygiu1")

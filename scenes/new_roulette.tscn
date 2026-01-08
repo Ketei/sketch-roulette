@@ -1,0 +1,674 @@
+[gd_scene load_steps=25 format=3 uid="uid://ds6sgcocncxls"]
+
+[ext_resource type="Script" uid="uid://cncc5v24hb0eu" path="res://scenes/new_roulette_script.gd" id="1_ko7eu"]
+[ext_resource type="Texture2D" uid="uid://dtyrj12ky41iu" path="res://icons/edit_icon.svg" id="1_rorgh"]
+[ext_resource type="Texture2D" uid="uid://btuqksudx8clh" path="res://icons/trash_bin.svg" id="2_ko7eu"]
+[ext_resource type="Script" uid="uid://cmsanqwtm4t3l" path="res://scenes/tags_tree_script.gd" id="3_cnyh0"]
+[ext_resource type="Texture2D" uid="uid://d4go6vncajhe" path="res://icons/gear_icon.svg" id="4_60kbw"]
+[ext_resource type="Texture2D" uid="uid://npqh5bbjbbcr" path="res://icons/trash_bin_large.svg" id="4_m5uyt"]
+[ext_resource type="Script" uid="uid://bg8p4jddfl5gr" path="res://scenes/group_editor_window.gd" id="5_60kbw"]
+[ext_resource type="Texture2D" uid="uid://b3e6c867xjaph" path="res://icons/new_folder_icon.svg" id="5_yemrx"]
+[ext_resource type="Texture2D" uid="uid://odhq0kmsoof3" path="res://icons/new_tag_icon.svg" id="7_cnyh0"]
+[ext_resource type="Texture2D" uid="uid://dsmluyy8xjrcu" path="res://icons/copy_icon.svg" id="7_m5uyt"]
+[ext_resource type="AudioStream" uid="uid://gi1ymi1byihj" path="res://audio/finish_sound.wav" id="8_3ouiu"]
+[ext_resource type="Texture2D" uid="uid://x4bxfsirj01j" path="res://icons/pepper_icon.svg" id="10_yemrx"]
+[ext_resource type="Script" uid="uid://dpo5arisp1efd" path="res://scenes/tag_editor_window.gd" id="12_lg3hj"]
+[ext_resource type="Script" uid="uid://b104jm5pspc1w" path="res://scenes/confirm_tags_tree_script.gd" id="12_m5uyt"]
+[ext_resource type="Script" uid="uid://chflro31nb3c1" path="res://scenes/roll_set_up_script.gd" id="13_3ouiu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j4oxs"]
+content_margin_left = 5.0
+content_margin_top = 3.0
+content_margin_right = 5.0
+content_margin_bottom = 3.0
+bg_color = Color(0.0562916, 0.0562916, 0.0562916, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_c4u0h"]
+TooltipPanel/styles/panel = SubResource("StyleBoxFlat_j4oxs")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tyee0"]
+content_margin_left = 8.0
+content_margin_top = 10.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[sub_resource type="GDScript" id="GDScript_cnyh0"]
+script/source = "extends ConfirmationDialog
+
+
+signal dialog_finished(result: bool)
+
+
+func _ready() -> void:
+	confirmed.connect(dialog_finished.emit.bind(true))
+	canceled.connect(dialog_finished.emit.bind(false))
+"
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3ouiu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m5uyt"]
+content_margin_top = 6.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lg3hj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sq7ho"]
+content_margin_left = 6.0
+content_margin_top = 8.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.122252, 0.122252, 0.122252, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7psru"]
+
+[node name="SketchRouletteMain" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme = SubResource("Theme_c4u0h")
+theme_override_styles/panel = SubResource("StyleBoxFlat_tyee0")
+script = ExtResource("1_ko7eu")
+
+[node name="MainWindow" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainWindow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Sketch Roulette"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainWindow"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainWindow"]
+layout_mode = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainWindow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MainWindow/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_yemrx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SpicySpnBx" type="SpinBox" parent="MainWindow/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Max Spiciness"
+allow_greater = true
+
+[node name="EnableNSFWChkBtn" type="CheckButton" parent="MainWindow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+tooltip_text = "Include NSFW tags"
+text = "NSFW"
+
+[node name="EditMenuBtn" type="MenuButton" parent="MainWindow/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Edit Tags/Groups"
+icon = ExtResource("1_rorgh")
+icon_alignment = 1
+item_count = 2
+popup/item_0/text = "Edit Tags"
+popup/item_0/id = 0
+popup/item_1/text = "Edit Groups"
+popup/item_1/id = 1
+
+[node name="HSeparator2" type="HSeparator" parent="MainWindow"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MainWindow"]
+layout_mode = 2
+alignment = 1
+
+[node name="ErasePresetBtn" type="Button" parent="MainWindow/HBoxContainer3"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Erase Preset"
+disabled = true
+icon = ExtResource("4_m5uyt")
+icon_alignment = 1
+expand_icon = true
+
+[node name="PresetOptBtn" type="OptionButton" parent="MainWindow/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Loads a preset on to
+the software"
+text_overrun_behavior = 3
+selected = 0
+item_count = 2
+popup/item_0/text = "Default"
+popup/item_0/id = 0
+popup/item_1/text = "Use All"
+popup/item_1/id = 1
+
+[node name="RollTagsBtn" type="Button" parent="MainWindow/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Roll for Tags"
+
+[node name="ConfigRollBtn" type="Button" parent="MainWindow/HBoxContainer3"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Configure Roll"
+icon = ExtResource("4_60kbw")
+icon_alignment = 1
+
+[node name="HSeparator3" type="HSeparator" parent="MainWindow"]
+layout_mode = 2
+
+[node name="TagsTree" type="Tree" parent="MainWindow"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+hide_root = true
+script = ExtResource("3_cnyh0")
+
+[node name="HSeparator5" type="HSeparator" parent="MainWindow"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainWindow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+text = "Time"
+horizontal_alignment = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+
+[node name="HourContainer" type="HBoxContainer" parent="MainWindow/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HourSpnBx" type="SpinBox" parent="MainWindow/VBoxContainer/HBoxContainer3/HourContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 99.0
+update_on_text_changed = true
+
+[node name="Label2" type="Label" parent="MainWindow/VBoxContainer/HBoxContainer3/HourContainer"]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+text = "Hrs"
+
+[node name="VSeparator" type="VSeparator" parent="MainWindow/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="MinuteContainer" type="HBoxContainer" parent="MainWindow/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MinSpnBx" type="SpinBox" parent="MainWindow/VBoxContainer/HBoxContainer3/MinuteContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 59.0
+value = 1.0
+update_on_text_changed = true
+
+[node name="Label2" type="Label" parent="MainWindow/VBoxContainer/HBoxContainer3/MinuteContainer"]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+text = "Min"
+
+[node name="VSeparator2" type="VSeparator" parent="MainWindow/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="SecondContainer" type="HBoxContainer" parent="MainWindow/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SecSpnBx" type="SpinBox" parent="MainWindow/VBoxContainer/HBoxContainer3/SecondContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 59.0
+update_on_text_changed = true
+
+[node name="Label2" type="Label" parent="MainWindow/VBoxContainer/HBoxContainer3/SecondContainer"]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+text = "Secs"
+
+[node name="HSeparator4" type="HSeparator" parent="MainWindow"]
+layout_mode = 2
+
+[node name="StartTimerBtn" type="Button" parent="MainWindow"]
+layout_mode = 2
+text = "Start Timer"
+
+[node name="GroupsWindow" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 2
+script = ExtResource("5_60kbw")
+
+[node name="Label" type="Label" parent="GroupsWindow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Groups"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NewGroupBtn" type="Button" parent="GroupsWindow/Label"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+grow_vertical = 2
+tooltip_text = "Create group"
+icon = ExtResource("5_yemrx")
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="GroupsWindow"]
+layout_mode = 2
+
+[node name="EraseGroupBtn" type="Button" parent="GroupsWindow/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Erase Group"
+disabled = true
+icon = ExtResource("2_ko7eu")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Label" type="Label" parent="GroupsWindow/HBoxContainer2"]
+layout_mode = 2
+text = "Group"
+
+[node name="GroupOptBtn" type="OptionButton" parent="GroupsWindow/HBoxContainer2"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+text_overrun_behavior = 3
+fit_to_longest_item = false
+
+[node name="AddTagBtn" type="Button" parent="GroupsWindow/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Add Tags"
+disabled = true
+icon = ExtResource("7_cnyh0")
+icon_alignment = 1
+expand_icon = true
+
+[node name="HSeparator" type="HSeparator" parent="GroupsWindow"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TagScrollContainer" type="ScrollContainer" parent="GroupsWindow"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TagGroupContainer" type="VBoxContainer" parent="GroupsWindow/TagScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="GroupsWindow"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="GroupsWindow/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="GroupsWindow/HBoxContainer4/HBoxContainer2"]
+layout_mode = 2
+text = "Select"
+
+[node name="SelectCountSpnBx" type="SpinBox" parent="GroupsWindow/HBoxContainer4/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 0.0
+editable = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GroupsWindow/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="GroupsWindow/HBoxContainer4/HBoxContainer"]
+layout_mode = 2
+text = "Priority"
+
+[node name="PrioSpnBx" type="SpinBox" parent="GroupsWindow/HBoxContainer4/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GroupsWindow"]
+layout_mode = 2
+
+[node name="DoneBtn" type="Button" parent="GroupsWindow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Done"
+
+[node name="RemoveTagConfirmDialog" type="ConfirmationDialog" parent="GroupsWindow"]
+title = "Remove tag..."
+initial_position = 2
+size = Vector2i(280, 106)
+ok_button_text = "Remove"
+dialog_autowrap = true
+script = SubResource("GDScript_cnyh0")
+
+[node name="AddTagsWindow" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_3ouiu")
+
+[node name="AddTagsReader" type="VBoxContainer" parent="AddTagsWindow"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="AddTagsWindow/AddTagsReader"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Add Tags"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TagsTxtEdt" type="TextEdit" parent="AddTagsWindow/AddTagsReader"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Add tags...
+One line per tag."
+wrap_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AddTagsWindow/AddTagsReader"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="CancelAddBtn" type="Button" parent="AddTagsWindow/AddTagsReader/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="AddTagsBtn" type="Button" parent="AddTagsWindow/AddTagsReader/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+text = "Submit"
+
+[node name="AddTagsConfirmation" type="VBoxContainer" parent="AddTagsWindow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="AddTagsWindow/AddTagsConfirmation"]
+layout_mode = 2
+text = "The next tags will be added"
+horizontal_alignment = 1
+
+[node name="TagsTree" type="Tree" parent="AddTagsWindow/AddTagsConfirmation"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
+allow_reselect = true
+hide_folding = true
+hide_root = true
+script = ExtResource("12_m5uyt")
+
+[node name="ButtonContainer" type="HBoxContainer" parent="AddTagsWindow/AddTagsConfirmation"]
+layout_mode = 2
+
+[node name="CancelAddBtn" type="Button" parent="AddTagsWindow/AddTagsConfirmation/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="SubmitAddBtn" type="Button" parent="AddTagsWindow/AddTagsConfirmation/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+text = "Add Tags"
+
+[node name="TagEditorWindow" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 2
+script = ExtResource("12_lg3hj")
+
+[node name="Label" type="Label" parent="TagEditorWindow"]
+layout_mode = 2
+text = "Tags"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="TagEditorWindow"]
+layout_mode = 2
+
+[node name="SearchTag" type="LineEdit" parent="TagEditorWindow"]
+layout_mode = 2
+placeholder_text = "Search Tag"
+
+[node name="HSeparator2" type="HSeparator" parent="TagEditorWindow"]
+visible = false
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TagEditorWindow"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m5uyt")
+
+[node name="TagEditorEntries" type="VBoxContainer" parent="TagEditorWindow/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TagEditorWindow"]
+layout_mode = 2
+alignment = 1
+
+[node name="PrevPageBtn" type="Button" parent="TagEditorWindow/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+disabled = true
+text = "<"
+
+[node name="PageCounterLabel" type="Label" parent="TagEditorWindow/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "1/10000"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="NextPageBtn" type="Button" parent="TagEditorWindow/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+disabled = true
+text = ">"
+
+[node name="DoneButton" type="Button" parent="TagEditorWindow"]
+layout_mode = 2
+text = "Done"
+
+[node name="RollSetUp" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 2
+script = ExtResource("13_3ouiu")
+
+[node name="Label" type="Label" parent="RollSetUp"]
+layout_mode = 2
+text = "Roll Setup"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="RollSetUp"]
+layout_mode = 2
+
+[node name="DataContainer" type="VBoxContainer" parent="RollSetUp"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="ItemsContainer" type="HBoxContainer" parent="RollSetUp/DataContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+theme_override_constants/separation = 6
+
+[node name="GroupsScroll" type="ScrollContainer" parent="RollSetUp/DataContainer/ItemsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GroupsContainer" type="VBoxContainer" parent="RollSetUp/DataContainer/ItemsContainer/GroupsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="RollSetUp/DataContainer/ItemsContainer"]
+layout_mode = 2
+
+[node name="TagsScroll" type="ScrollContainer" parent="RollSetUp/DataContainer/ItemsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TagsContainer" type="VBoxContainer" parent="RollSetUp/DataContainer/ItemsContainer/TagsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="RollSetUp/DataContainer"]
+layout_mode = 2
+
+[node name="FormatTextEdit" type="TextEdit" parent="RollSetUp/DataContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Prompt Format"
+
+[node name="HSeparator2" type="HSeparator" parent="RollSetUp"]
+layout_mode = 2
+theme_override_constants/separation = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_lg3hj")
+
+[node name="ButtonContainer" type="HBoxContainer" parent="RollSetUp"]
+layout_mode = 2
+
+[node name="SavePresetBtn" type="Button" parent="RollSetUp/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save Preset"
+
+[node name="DoneBtn" type="Button" parent="RollSetUp/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Done"
+
+[node name="CountdownContainer" type="VBoxContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CountdownContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="CountdownContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Your prompt"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CopyTagsBtn" type="Button" parent="CountdownContainer/VBoxContainer/Label"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -4.0
+offset_bottom = 4.0
+grow_horizontal = 0
+grow_vertical = 2
+tooltip_text = "Copy tags"
+icon = ExtResource("7_m5uyt")
+icon_alignment = 1
+expand_icon = true
+
+[node name="PanelContainer" type="PanelContainer" parent="CountdownContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_sq7ho")
+
+[node name="SelectedTagsTxtEdt" type="TextEdit" parent="CountdownContainer/VBoxContainer/PanelContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
+editable = false
+wrap_mode = 1
+
+[node name="SeletedTagsRTL" type="RichTextLabel" parent="CountdownContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+focus_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7psru")
+bbcode_enabled = true
+selection_enabled = true
+
+[node name="HSeparator" type="HSeparator" parent="CountdownContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CountdownContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TimeLabel" type="Label" parent="CountdownContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "00:00:00"
+horizontal_alignment = 2
+
+[node name="Label" type="Label" parent="CountdownContainer/HBoxContainer"]
+layout_mode = 2
+text = "/"
+
+[node name="TotalTimeLabel" type="Label" parent="CountdownContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "00:00:00"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CountdownContainer"]
+layout_mode = 2
+
+[node name="StopTimeBtn" type="Button" parent="CountdownContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Stop Timer"
+
+[node name="PauseTimeBtn" type="Button" parent="CountdownContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+text = "Pause Timer"
+
+[node name="ReturnBtn" type="Button" parent="CountdownContainer/HBoxContainer2"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Return"
+
+[node name="SecondTimer" type="Timer" parent="."]
+
+[node name="SoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_3ouiu")

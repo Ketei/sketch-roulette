@@ -17,11 +17,6 @@ var strip_edges: bool = true
 var use_blacklist: bool = false
 var allow_empty: bool = true
 
-var error_line_empty_msg: String = "Field can't be empty"
-var error_line_blacklist_word_msg: String = "Word is blacklisted"
-var error_line_blacklist_character_msg: String = "A character is blacklisted"
-var error_line_ok: String = "No issues found"
-
 
 func _init() -> void:
 	_dialog_line = LineEdit.new()

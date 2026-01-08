@@ -1,0 +1,34 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://buo0edogbfa4m"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_symeg"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eoo6d"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qbebc"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_symeg"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.478431, 0.764706, 1, 0.196078)
+
+[resource]
+Button/colors/font_hover_pressed_color = Color(0.498039, 0.921569, 0.964706, 1)
+Button/colors/font_pressed_color = Color(0.496377, 0.921468, 0.963499, 1)
+Button/styles/focus = SubResource("StyleBoxEmpty_symeg")
+Button/styles/hover = SubResource("StyleBoxEmpty_eoo6d")
+Button/styles/normal = SubResource("StyleBoxEmpty_qbebc")
+Button/styles/pressed = SubResource("StyleBoxFlat_symeg")
