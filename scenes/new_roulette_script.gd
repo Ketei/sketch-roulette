@@ -103,10 +103,10 @@ func _ready() -> void:
 	database.path = "user://main_database.db"
 	database.verbosity_level = SQLite.VerbosityLevel.NORMAL
 	
-	database.open_db()
-	
 	if not database.foreign_keys:
 		database.foreign_keys = true
+	
+	database.open_db()
 	
 	database.query("PRAGMA synchronous = NORMAL; PRAGMA journal_mode = WAL; PRAGMA temp_store = MEMORY;")
 	
