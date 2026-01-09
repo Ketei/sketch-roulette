@@ -132,7 +132,7 @@ func _ready() -> void:
 			"CREATE TABLE IF NOT EXISTS group_tag_map (
 				group_id INTEGER,
 				tag_id INTEGER,
-				tag_weight INTEGER DEFAULT 10000,
+				tag_weight INTEGER DEFAULT 100,
 				PRIMARY KEY (group_id, tag_id),
 				FOREIGN KEY (group_id) REFERENCES tag_groups (id) ON DELETE CASCADE,
 				FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE);")

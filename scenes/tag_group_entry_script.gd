@@ -58,7 +58,7 @@ func _on_groups_idx_pressed(idx: int) -> void:
 
 
 func _on_weight_changed(value: float) -> void:
-	var new_weight: int = int(value * 100)
+	var new_weight: int = int(value)
 	weight_changed.emit(tag_id, new_weight)
 
 
@@ -66,7 +66,7 @@ func set_data(tag: String, weight: int, triggers: Array) -> void:
 	var popup: PopupMenu = group_trigger_mn_btn.get_popup()
 	
 	tag_label.text = tag
-	weight_spinbx.set_value_no_signal(weight / 100.0)
+	weight_spinbx.set_value_no_signal(weight)
 	
 	for idx in range(popup.item_count):
 		popup.set_item_checked(idx, triggers.has(popup.get_item_id(idx)))
@@ -79,7 +79,7 @@ func set_tag_name(new_name: String) -> void:
 func set_values(weight: int, triggers: Array) -> void:
 	var popup: PopupMenu = group_trigger_mn_btn.get_popup()
 	
-	weight_spinbx.set_value_no_signal(weight / 100.0)
+	weight_spinbx.set_value_no_signal(weight)
 	
 	for idx in range(popup.item_count):
 		popup.set_item_checked(idx, triggers.has(popup.get_item_id(idx)))
@@ -96,7 +96,7 @@ func get_tag_data() -> Dictionary:
 	var data: Dictionary = {
 		"id": tag_id,
 		"name": tag_label.text,
-		"weight": int(weight_spinbx.value * 100),
+		"weight": int(weight_spinbx.value),
 		"triggers": triggers}
 	
 	return data

@@ -14,11 +14,9 @@ text = "Yoshi"
 
 [node name="WeightSpinBx" type="SpinBox" parent="."]
 layout_mode = 2
-tooltip_text = "Tag Weight
-Probability this tag is picked"
-step = 0.01
+tooltip_text = "Tag Weight"
+max_value = 100000.0
 value = 100.0
-suffix = "%"
 
 [node name="VSeparator" type="VSeparator" parent="."]
 layout_mode = 2
