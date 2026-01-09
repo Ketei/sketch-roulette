@@ -47,6 +47,12 @@ func get_tags_on_group(group_id: int) -> Array[Dictionary]:
 	return t
 
 
+func group_tag_count(group_id: int) -> int:
+	if _groups_tags.has(group_id):
+		return _groups_tags[group_id].size()
+	return -1
+
+
 func pick_from_group_pool(group_id: int, amount: int, allow_repeats: bool = false, skip: Array = []) -> Array[Dictionary]:
 	var picked: Array[Dictionary] = []
 	

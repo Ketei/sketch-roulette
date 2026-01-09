@@ -2,9 +2,6 @@ class_name RollTagTree
 extends Tree
 
 
-#signal item_rerolled(from_category: StringName, id: StringName, item: TreeItem)
-
-
 var target_prompt: String = ""
 var group_modes: Dictionary[int, int] = {} # Group ID: mode
 var tag_pool: TagPool = null
@@ -18,18 +15,12 @@ func _ready() -> void:
 	button_clicked.connect(_on_button_clicked)
 
 
-#func _on_tag_available_toggled(is_toggled: bool, id: int) -> void:
-	#if tag_pool == null:
-		#return
-
-
 func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_index: int) -> void:
 	if mouse_button_index != MOUSE_BUTTON_LEFT:
 		return
 	
 	if id == 0:
 		reroll_tag(item)
-		#item_rerolled.emit(item.get_metadata(0)["category"], item.get_metadata(0)["id"], item)
 
 
 func reroll_tag(of_item: TreeItem) -> void:
@@ -38,19 +29,35 @@ func reroll_tag(of_item: TreeItem) -> void:
 			meta["group"],
 			1,
 			false,
-			[meta["id"]])
+			meta["picked"])
 	
 	if result.is_empty():
-		return
+		if 1 < tag_pool.group_tag_count(meta["group"]) and 1 < meta["picked"].size():
+			meta["picked"].assign([meta["id"]])
+			var second_try: Array[Dictionary] = tag_pool.pick_from_group_pool(
+					meta["group"],
+					1,
+					false,
+					meta["picked"])
+			
+			if not second_try.is_empty():
+				of_item.set_text(0, second_try[0]["name"])
+				meta["picked"].append(second_try[0]["id"])
+				meta["id"] = second_try[0]["id"]
+			return
+		
+		else:
+			return
 	
 	of_item.set_text(0, result[0]["name"])
 	meta["id"] = result[0]["id"]
+	meta["picked"].append(result[0]["id"])
 
 
 func add_tag(tag_text: String, id: int, group: int, group_index: int = -1, allow_reroll: bool = true) -> void:
 	var new_item: TreeItem = get_root().create_child()
 	new_item.set_text(0, tag_text)
-	new_item.set_metadata(0, {"id": id, "group": group})
+	new_item.set_metadata(0, {"id": id, "group": group, "picked": [id]})
 	new_item.add_button(
 			0,
 			preload("res://icons/refresh_icon.svg"),
