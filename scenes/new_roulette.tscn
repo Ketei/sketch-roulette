@@ -123,10 +123,10 @@ icon = ExtResource("1_rorgh")
 flat = false
 icon_alignment = 1
 item_count = 2
-popup/item_0/text = "Edit Tags"
-popup/item_0/id = 0
-popup/item_1/text = "Edit Groups"
-popup/item_1/id = 1
+popup/item_0/text = "Edit Groups"
+popup/item_0/id = 1
+popup/item_1/text = "Edit Tags"
+popup/item_1/id = 0
 
 [node name="HSeparator2" type="HSeparator" parent="MainWindow"]
 layout_mode = 2
