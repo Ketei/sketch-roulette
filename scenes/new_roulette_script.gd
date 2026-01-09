@@ -239,8 +239,6 @@ func _ready() -> void:
 	cancel_add_tags_btn.pressed.connect(_on_cancel_tags_to_add_pressed)
 	add_tags_btn.pressed.connect(_on_confirm_add_tags_pressed)
 	
-	tag_editor_search_tag.text_changed.connect(_on_tag_editor_search_tag)
-	
 	group_opt_btn.item_selected.connect(_on_group_selected, CONNECT_DEFERRED)
 	
 	sec_spn_bx.value_changed.connect(_on_time_value_updated)
@@ -621,19 +619,6 @@ func get_tags_from_db(max_spice: int, explicit: bool) -> TagPool:
 							tag_dict["group_id"],
 							tag_dict["id"]))
 	
-	#database.query("SELECT * FROM group_tag_map;")
-	#
-	#for group_map in database.query_result:
-		#if not roll_set_up_window.is_tag_enabled(group_map["group_id"], group_map["tag_id"]):
-			#continue
-		#pool.add_tag_to_group(
-				#group_map["group_id"],
-				#group_map["tag_id"],
-				#group_map["tag_weight"],
-				#roll_set_up_window.is_tag_enabled(
-						#group_map["group_id"],
-						#group_map["tag_id"]))
-	
 	return pool
 
 
@@ -808,12 +793,11 @@ func _on_edit_tags_done_button_pressed() -> void:
 	switch_to_window(main_window)
 
 
-func _on_tag_editor_search_tag(text: String) -> void:
-	text = text.strip_edges()
-	var empty: bool = text.is_empty()
-	
-	for item:TagItemEntry in tag_editor_entries.get_children():
-		item.visible = empty or item.tag_name().containsn(text)
+#func _on_tag_editor_search_tag(text: String) -> void:
+	#var empty: bool = text.is_empty()
+	#
+	#for item:TagItemEntry in tag_editor_entries.get_children():
+		#item.visible = empty or item.tag_name().containsn(text)
 
 
 func _on_add_tags_to_grp_btn_pressed() -> void:
@@ -1012,6 +996,7 @@ func _on_tag_name_changed(tag_id: int, new_name: String) -> void:
 	if success:
 		roll_set_up_window.set_tag_name(tag_id, new_name)
 		groups_window.set_tag_name(tag_id, new_name)
+		prompt_tags_tree.update_tag_name(tag_id, new_name)
 	else:
 		push_error("Error while updating tag: " + str(tag_id) + " to " + new_name)
 
@@ -1021,7 +1006,9 @@ func _on_spiciness_changed(tag_id: int, new_level: int) -> void:
 			"UPDATE tags SET spicy_level = ? WHERE id = ?;",
 			[new_level, tag_id])
 	
-	if not success:
+	if success:
+		prompt_tags_tree.update_tag_spicy_level(tag_id, new_level)
+	else:
 		push_error("Error while updating spice from tag " + str(tag_id) + " to " + str(new_level))
 
 
@@ -1030,7 +1017,9 @@ func _on_explicit_changed(tag_id: int, is_explicit: bool) -> void:
 			"UPDATE tags SET spicy_level = ? WHERE id = ?;",
 			[int(is_explicit), tag_id])
 	
-	if not success:
+	if success:
+		prompt_tags_tree.update_tag_explicit(tag_id, is_explicit)
+	else:
 		push_error("Error while updating Explicit for tag " + str(tag_id) + " to " + "True" if is_explicit else "False")
 
 
@@ -1039,12 +1028,15 @@ func _on_reference_changed(tag_id: int, url: String) -> void:
 			"UPDATE tags SET reference_url = ? WHERE id = ?;",
 			[url, tag_id])
 	
-	if not success:
+	if success:
+		prompt_tags_tree.update_tag_reference(tag_id, url)
+	else:
 		push_error("Error while updating reference for tag " + str(tag_id) + " to " + url)
 
 
 func _on_tag_weight_changed(group_id: int, tag_id: int, new_weight: int) -> void:
 	active_preset.set_tag_weight(group_id, tag_id, new_weight)
+	prompt_tags_tree.update_tag_weight(group_id, tag_id, new_weight)
 
 
 func _on_preset_saved(preset_id: int, preset_name: String, format_template: String, preset_data: Dictionary) -> void:

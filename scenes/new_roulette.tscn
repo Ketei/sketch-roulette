@@ -375,7 +375,6 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_3ouiu")
 
 [node name="AddTagsReader" type="VBoxContainer" parent="AddTagsWindow"]
-visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="AddTagsWindow/AddTagsReader"]
@@ -408,6 +407,7 @@ size_flags_stretch_ratio = 3.0
 text = "Submit"
 
 [node name="AddTagsConfirmation" type="VBoxContainer" parent="AddTagsWindow"]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="AddTagsWindow/AddTagsConfirmation"]

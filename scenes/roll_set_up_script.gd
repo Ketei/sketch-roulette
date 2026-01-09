@@ -2,7 +2,6 @@ extends VBoxContainer
 
 
 signal preset_saved(preset_id: int, preset_name: int, format_template: String, preset_data: Dictionary)
-#signal group_selected(group_id: int)
 
 const ROLL_GROUP_ITEM = preload("res://scenes/roll_group_item.tscn")
 
@@ -55,69 +54,6 @@ func is_tag_enabled(on_group: int, tag_id: int) -> bool:
 			if item["id"] == tag_id:
 				return item["enabled"]
 	return false
-
-
-#func get_tags_from_group(group_id: int, tag_amount: int, max_spiciness: int, use_nsfw: bool, allow_repeats: bool = false, exclude: Array[int] = []) -> Array[String]:
-	#var s: Array[String] = []
-	#
-	#if tag_amount <= 0:
-		#return s
-	#
-	#var tag_bag: Array[Dictionary] = []
-	#var cumulative_weight: int = 0
-	#var drawn: int = 0
-	#
-	#if 0 < tag_amount and roll_state.has(group_id):
-		#var weight_bag: Array[Dictionary] = []
-		#for tag_dict in roll_state[group_id]["tags"]:
-			#if not tag_dict["enabled"] or exclude.has(tag_dict["id"]) or (not use_nsfw and tag_dict["explicit"]) or max_spiciness < tag_dict["spicy_level"]:
-				#continue
-			#weight_bag.append({"name": tag_dict["name"], "weight": tag_dict["weight"]})
-		#
-		#weight_bag.sort_custom(func(a,b): return b["weight"] < a["weight"])
-		#
-		#for item in weight_bag:
-			#cumulative_weight += item["weight"]
-			#tag_bag.append({
-				#"name": item["name"],
-				#"weight": item["weight"]})
-		#
-		#tag_bag.sort_custom(func(a,b): return a["weight"] < b["weight"])
-	#
-	#while not tag_bag.is_empty() and drawn < tag_amount:
-		#var random_weight: int = randi_range(0, cumulative_weight)
-		#var weight_step: int = 0
-		#for item_idx in range(tag_bag.size()):
-			#if random_weight <= tag_bag[item_idx]["weight"] + weight_step:
-				#drawn += 1
-				#s.append(tag_bag[item_idx]["name"])
-				#if not allow_repeats:
-					#cumulative_weight -= tag_bag[item_idx]["weight"]
-					#tag_bag.remove_at(item_idx)
-			#else:
-				#weight_step += tag_bag[item_idx]["weight"]
-	#
-	#return s
-#
-#
-#func get_tags_from_group_with_id(group_id: int, tag_amount: int, max_spiciness: int, use_nsfw: bool, exclude: Array[int] = []) -> Dictionary[int, String]:
-	#var d: Dictionary[int, String] = {}
-	#
-	#if tag_amount <= 0:
-		#return d
-	#
-	#var count: int = 0
-	#if 0 < tag_amount and roll_state.has(group_id):
-		#for tag_dict in roll_state[group_id]["tags"]:
-			#if not tag_dict["enabled"] or exclude.has(tag_dict["id"]) or (not use_nsfw and tag_dict["explicit"]) or max_spiciness < tag_dict["spicy_level"]:
-				#continue
-			#d[tag_dict["id"]] = tag_dict["name"]
-			#count += 1
-			#
-			#if tag_amount <= count :
-				#break
-	#
-	#return d
 
 
 func create_group_node(group_id: int, group_name: String, group_mode: int = 0) -> Control:
@@ -269,15 +205,6 @@ func get_groups_mode() -> Dictionary[int, int]:
 	for item in groups_container.get_children():
 		g[item.group_id] = item.current_mode
 	return g
-
-
-#func get_group_names_mode(only_active: bool = false) -> Dictionary[String, int]:
-	#var g: Dictionary[String, int] = {}
-	#for item in groups_container.get_children():
-		#if only_active and item.current_mode == 2:
-			#continue
-		#g[item.get_group_name()] = item.current_mode
-	#return g
 
 
 func get_group_names_mode(only_active: bool = false) -> Array[Dictionary]:

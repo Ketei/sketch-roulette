@@ -35,6 +35,7 @@ custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 theme_override_constants/icon_max_width = 18
 icon = ExtResource("3_n2xee")
+flat = false
 icon_alignment = 1
 item_count = 3
 popup/item_0/text = "Use Group"

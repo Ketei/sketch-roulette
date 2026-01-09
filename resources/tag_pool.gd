@@ -29,6 +29,34 @@ func get_tag_reference(tag_id: int) -> String:
 	return ""
 
 
+func set_tag_reference(tag_id: int, reference_url: String) -> void:
+	if _tags.has(tag_id):
+		_tags[tag_id]["reference"] = reference_url
+
+
+func set_tag_spicy_level(tag_id: int, spicy_level: int) -> void:
+	if _tags.has(tag_id):
+		_tags[tag_id]["spicy_level"] = spicy_level
+
+
+func set_tag_explicit(tag_id: int, is_explicit: bool) -> void:
+	if _tags.has(tag_id):
+		_tags[tag_id]["explicit"] = is_explicit
+
+
+func set_tag_name(tag_id: int, new_name: String) -> void:
+	if _tags.has(tag_id):
+		_tags[tag_id]["name"] = new_name
+
+
+func set_tag_weight(group_id: int, tag_id: int, new_weight: int) -> void:
+	if _groups_tags.has(group_id):
+		for item in _groups_tags[group_id]:
+			if item["tag_id"] == tag_id:
+				item["weight"] = new_weight
+				break
+
+
 func add_tag_to_group(group_id: int, tag_id: int, tag_weight: int, enabled: bool = true) -> void:
 	if not _tags.has(tag_id):
 		return

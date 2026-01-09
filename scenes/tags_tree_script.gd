@@ -23,6 +23,35 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, mouse_button_inde
 		reroll_tag(item)
 
 
+func update_tag_reference(tag_id: int, reference: String) -> void:
+	if tag_pool != null:
+		tag_pool.set_tag_reference(tag_id, reference)
+
+
+func update_tag_spicy_level(tag_id: int, spicy: int) -> void:
+	if tag_pool != null:
+		tag_pool.set_tag_spicy_level(tag_id, spicy)
+
+
+func update_tag_explicit(tag_id: int, explicit: bool) -> void:
+	if tag_pool != null:
+		tag_pool.set_tag_explicit(tag_id, explicit)
+
+
+func update_tag_name(tag_id: int, new_name: String) -> void:
+	if tag_pool != null:
+		tag_pool.set_tag_name(tag_id, new_name)
+		
+		for item in root.get_children():
+			if item.get_metadata(0)["id"] == tag_id:
+				item.set_text(0, new_name)
+
+
+func update_tag_weight(group_id: int, tag_id: int, new_weight: int) -> void:
+	if tag_pool != null:
+		tag_pool.set_tag_weight(group_id, tag_id, new_weight)
+
+
 func reroll_tag(of_item: TreeItem) -> void:
 	var meta: Dictionary = of_item.get_metadata(0)
 	var result: Array[Dictionary] = tag_pool.pick_from_group_pool(
