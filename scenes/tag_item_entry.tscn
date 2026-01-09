@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cf4awmovdqxem"]
+[gd_scene load_steps=7 format=3 uid="uid://cf4awmovdqxem"]
 
 [ext_resource type="Script" uid="uid://pabaj1aig32y" path="res://scenes/tag_item_entry_script.gd" id="1_7sr8j"]
 [ext_resource type="Texture2D" uid="uid://ql6mcl8t03iq" path="res://icons/pencil_icon.svg" id="2_ygiu1"]
+[ext_resource type="Texture2D" uid="uid://ca0qemks410pd" path="res://icons/save_icon.svg" id="3_breup"]
 [ext_resource type="Texture2D" uid="uid://x4bxfsirj01j" path="res://icons/pepper_icon.svg" id="3_nr438"]
 [ext_resource type="Texture2D" uid="uid://c65kpxloaer72" path="res://icons/link_icon.svg" id="4_ygiu1"]
 
@@ -38,6 +39,8 @@ layout_mode = 2
 [node name="SaveBtn" type="Button" parent="NamePanel/EditContainer"]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
+icon = ExtResource("3_breup")
+icon_alignment = 1
 
 [node name="TagLnEdt" type="LineEdit" parent="NamePanel/EditContainer"]
 layout_mode = 2
