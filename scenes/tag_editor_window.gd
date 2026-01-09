@@ -47,6 +47,7 @@ func set_tags(tags: Array[Dictionary]) -> void:
 		var new_item: TagItemEntry = TAG_ITEM_ENTRY.instantiate()
 		tag_editor_entries.add_child(new_item)
 		new_item.set_data(item["id"], item["tag_name"], item["spicy_level"], item["explicit"], item["reference"])
+		new_item.data_ref = item
 		new_item.tag_name_changed.connect(_on_item_entry_tag_name_changed)
 		new_item.spiciness_changed.connect(_on_item_entry_spiciness_changed)
 		new_item.explicitness_changed.connect(_on_hornyness_changed)
@@ -71,6 +72,8 @@ func _on_next_page_pressed() -> void:
 	for item in tag_editor_entries.get_children():
 		item.tag_name_changed.disconnect(_on_item_entry_tag_name_changed)
 		item.spiciness_changed.disconnect(_on_item_entry_spiciness_changed)
+		item.explicitness_changed.disconnect(_on_hornyness_changed)
+		item.reference_changed.disconnect(_on_reference_changed)
 		tag_editor_entries.remove_child(item)
 		item.queue_free()
 	
@@ -78,13 +81,16 @@ func _on_next_page_pressed() -> void:
 		var new_item: TagItemEntry = TAG_ITEM_ENTRY.instantiate()
 		tag_editor_entries.add_child(new_item)
 		new_item.set_data(item["id"], item["tag_name"], item["spicy_level"], item["explicit"])
+		new_item.data_ref = item
 		new_item.tag_name_changed.connect(_on_item_entry_tag_name_changed)
 		new_item.spiciness_changed.connect(_on_item_entry_spiciness_changed)
+		new_item.explicitness_changed.connect(_on_hornyness_changed)
+		new_item.reference_changed.connect(_on_reference_changed)
 	
 	page_counter_label.text = str(step + 1, "/", page_count)
 	
 	prev_page_btn.disabled = false
-	next_page_btn.disabled = step + 1 < page_count
+	next_page_btn.disabled = page_count < step + 2
 	
 	step += 1
 
@@ -98,6 +104,8 @@ func _on_prev_page_pressed() -> void:
 	for item in tag_editor_entries.get_children():
 		item.tag_name_changed.disconnect(_on_item_entry_tag_name_changed)
 		item.spiciness_changed.disconnect(_on_item_entry_spiciness_changed)
+		item.explicitness_changed.disconnect(_on_hornyness_changed)
+		item.reference_changed.disconnect(_on_reference_changed)
 		tag_editor_entries.remove_child(item)
 		item.queue_free()
 	
@@ -105,8 +113,11 @@ func _on_prev_page_pressed() -> void:
 		var new_item: TagItemEntry = TAG_ITEM_ENTRY.instantiate()
 		tag_editor_entries.add_child(new_item)
 		new_item.set_data(item["id"], item["tag_name"], item["spicy_level"], item["explicit"])
+		new_item.data_ref = item
 		new_item.tag_name_changed.connect(_on_item_entry_tag_name_changed)
 		new_item.spiciness_changed.connect(_on_item_entry_spiciness_changed)
+		new_item.explicitness_changed.connect(_on_hornyness_changed)
+		new_item.reference_changed.connect(_on_reference_changed)
 	
 	page_counter_label.text = str(step - 1, "/", page_count)
 	
