@@ -899,12 +899,12 @@ func _on_confirm_add_tags_pressed() -> void:
 		
 		database.insert_row(
 				"group_tag_map",
-				{"group_id": group_id, "tag_id": id, "tag_weight": 10000})
+				{"group_id": group_id, "tag_id": id, "tag_weight": 100})
 		
 		active_preset.set_group_tag(
 				group_id,
 				id,
-				10000,
+				100,
 				[])
 		
 		new_data.append({
