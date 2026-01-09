@@ -76,6 +76,7 @@ func add_tags(tags: Array[Dictionary]) -> void:
 		item.set_data(new_item.name, 10000, [])
 		item.remove_tag_pressed.connect(_on_remove_tag_pressed)
 		item.tag_triggers_changed.connect(_on_tag_triggers_changed)
+		item.weight_changed.connect(_on_weight_changed)
 	select_count_spn_bx.max_value += tag_count
 	select_count_spn_bx.set_value_no_signal(select_count_spn_bx.value + tag_count)
 
@@ -84,6 +85,7 @@ func set_group_data(data: Dictionary) -> void:
 	for tag_item in tag_group_container.get_children():
 		tag_item.remove_tag_pressed.disconnect(_on_remove_tag_pressed)
 		tag_item.tag_triggers_changed.disconnect(_on_tag_triggers_changed)
+		tag_item.weight_changed.disconnect(_on_weight_changed)
 		tag_group_container.remove_child(tag_item)
 		tag_item.queue_free()
 	
@@ -103,6 +105,7 @@ func set_group_data(data: Dictionary) -> void:
 		item.set_data(tag.name, tag.weight, tag.triggers)
 		item.remove_tag_pressed.connect(_on_remove_tag_pressed)
 		item.tag_triggers_changed.connect(_on_tag_triggers_changed)
+		item.weight_changed.connect(_on_weight_changed)
 	
 	prio_spn_bx.set_value_no_signal(data.priority)
 	select_count_spn_bx.set_value_no_signal(data.select_count if 0 <= data.select_count else tag_count)

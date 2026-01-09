@@ -21,6 +21,7 @@ func _ready() -> void:
 	group_trigger_mn_btn.get_popup().hide_on_checkable_item_selection = false
 	group_trigger_mn_btn.get_popup().index_pressed.connect(_on_groups_idx_pressed)
 	remove_tag_btn.pressed.connect(_on_erase_tag_pressed)
+	weight_spinbx.value_changed.connect(_on_weight_changed)
 
 
 func set_groups(groups: Array[Dictionary], skip_groups: Array = [], restore: bool = true) -> void:
