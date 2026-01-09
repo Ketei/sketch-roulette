@@ -599,7 +599,7 @@ func get_tags_from_db(max_spice: int, explicit: bool) -> TagPool:
 	var explicit_str: String = "(0, 1)" if explicit else "(0)"
 	var groups: Dictionary = roll_set_up_window.get_groups_mode()
 	database.query(
-			"SELECT t.*, gtm.group_id, gtm.tag_weight  
+			"SELECT t.*, gtm.group_id  
 			FROM tags t 
 			JOIN group_tag_map gtm ON t.id = gtm.tag_id
 			WHERE t.explicit IN " + explicit_str + " 
@@ -617,7 +617,7 @@ func get_tags_from_db(max_spice: int, explicit: bool) -> TagPool:
 			pool.add_tag_to_group(
 					tag_dict["group_id"],
 					tag_dict["id"],
-					tag_dict["tag_weight"],
+					active_preset.get_tag_weight(tag_dict["group_id"], tag_dict["id"]),
 					roll_set_up_window.is_tag_enabled(
 							tag_dict["group_id"],
 							tag_dict["id"]))
@@ -771,7 +771,7 @@ func _on_group_selected(group_idx: int) -> void:
 	var group_data: Dictionary = query_result[0]
 	
 	database.query(
-			"SELECT t.id, t.tag_name, gtm.tag_weight 
+			"SELECT t.id, t.tag_name
 			FROM group_tag_map gtm 
 			JOIN tags t ON gtm.tag_id = t.id 
 			WHERE gtm.group_id = " + str(group_id) + ";")
@@ -783,7 +783,7 @@ func _on_group_selected(group_idx: int) -> void:
 		tags.append({
 			"id": item["id"],
 			"name": item["tag_name"],
-			"weight": item["tag_weight"],
+			"weight": active_preset.get_tag_weight(group_id, item["id"]),
 			"triggers": active_preset.get_trigger_groups(group_id, item["id"])})
 	
 	var data: Dictionary = {
@@ -1057,13 +1057,6 @@ func _on_reference_changed(tag_id: int, url: String) -> void:
 
 func _on_tag_weight_changed(group_id: int, tag_id: int, new_weight: int) -> void:
 	active_preset.set_tag_weight(group_id, tag_id, new_weight)
-	#var success: bool = database.query_with_bindings(
-			#"UPDATE group_tag_map SET tag_weight = ? WHERE group_id = ? AND tag_id = ?",
-			#[new_weight, group_id, tag_id])
-	#
-	#if success:
-	#else:
-		#push_error("Error while updating weight for tag " + str(tag_id) + " to " + str(new_weight))
 
 
 func _on_preset_saved(preset_id: int, preset_name: String, format_template: String, preset_data: Dictionary) -> void:
