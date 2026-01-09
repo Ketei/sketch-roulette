@@ -176,7 +176,7 @@ func _on_remove_tag_pressed(node: TagGroupEntry, prompt: bool) -> void:
 	tag_group_container.remove_child(node)
 	node.queue_free()
 	
-	tag_removed.emit(group_opt_btn.get_selected_metadata(), tag_id)
+	tag_removed.emit(group_opt_btn.get_selected_id(), tag_id)
 
 
 func _on_weight_changed(tag_id: int, new_weight: int) -> void:

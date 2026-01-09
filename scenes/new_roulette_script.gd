@@ -798,18 +798,6 @@ func _on_group_tag_name_changed(tag_id: int, new_name: String) -> void:
 	database.update_rows("tags", "id = " + str(tag_id), {"tag_name": new_name})
 
 
-func _on_group_tag_removed(group_id: int, tag_id: int) -> void:
-	database.delete_rows(
-			"group_tag_map",
-			"group_id = " + str(group_id) + " AND tag_id = " + str(tag_id))
-
-
-#func _on_add_tag_pressed() -> void:
-	#add_tags_txt_edt.text = ""
-	#switch_to_window(add_tags_window)
-	#add_tags_txt_edt.grab_focus()
-
-
 func _on_group_done_button_pressed() -> void:
 	if -1 < selected_group:
 		active_preset.set_group_draw_count(selected_group, int(select_count_spn_bx.value))
