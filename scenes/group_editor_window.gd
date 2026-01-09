@@ -73,7 +73,7 @@ func add_tags(tags: Array[Dictionary]) -> void:
 		tag_group_container.add_child(item)
 		item.tag_id = new_item.id
 		item.set_groups(tag_groups, [group_opt_btn.get_selected_id()])
-		item.set_data(new_item.name, 10000, [])
+		item.set_data(new_item.name, 100, [])
 		item.remove_tag_pressed.connect(_on_remove_tag_pressed)
 		item.tag_triggers_changed.connect(_on_tag_triggers_changed)
 		item.weight_changed.connect(_on_weight_changed)
