@@ -881,9 +881,10 @@ func _on_confirm_add_tags_pressed() -> void:
 				push_error("Error while trying to create tag: " + new_tag["tag_name"])
 				continue
 			id = database.last_insert_rowid
-			roller_tags.append({"id": id, "tag_name": new_tag["tag_name"], "tag_enabled": true})
 		else:
 			id = result[0]["id"]
+		
+		roller_tags.append({"id": id, "tag_name": new_tag["tag_name"], "tag_enabled": true})
 		
 		database.insert_row(
 				"group_tag_map",
