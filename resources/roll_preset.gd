@@ -110,7 +110,7 @@ func set_trigger_on_tag(group_id: int, tag_id: int, trigger_group: int, trigger:
 func get_tag_weight(group_id: int, tag_id: int) -> int:
 	if _enabled_groups.has(group_id) and _enabled_groups[group_id]["tags"].has(tag_id):
 		return _enabled_groups[group_id]["tags"][tag_id]["weight"]
-	return 10000
+	return 100
 
 
 func set_tag_weight(group_id: int, tag_id: int, weight: int) -> void:
