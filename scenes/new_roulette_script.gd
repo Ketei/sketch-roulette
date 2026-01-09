@@ -81,7 +81,6 @@ var _dirty_trigger_pairs: Dictionary[int, Dictionary] = {}
 @onready var time_label: Label = $CountdownContainer/HBoxContainer/TimeLabel
 @onready var total_time_label: Label = $CountdownContainer/HBoxContainer/TotalTimeLabel
 @onready var selected_tags_rtl: RichTextLabel = $CountdownContainer/VBoxContainer/PanelContainer/SeletedTagsRTL
-@onready var copy_tags_btn: Button = $CountdownContainer/VBoxContainer/Label/CopyTagsBtn
 
 # -------------
 

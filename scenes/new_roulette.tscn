@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://ds6sgcocncxls"]
+[gd_scene load_steps=23 format=3 uid="uid://ds6sgcocncxls"]
 
 [ext_resource type="Script" uid="uid://cncc5v24hb0eu" path="res://scenes/new_roulette_script.gd" id="1_ko7eu"]
 [ext_resource type="Texture2D" uid="uid://dtyrj12ky41iu" path="res://icons/edit_icon.svg" id="1_rorgh"]
@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://b3e6c867xjaph" path="res://icons/new_folder_icon.svg" id="5_yemrx"]
 [ext_resource type="Script" uid="uid://cmsanqwtm4t3l" path="res://scenes/tags_tree_script.gd" id="6_3ouiu"]
 [ext_resource type="Texture2D" uid="uid://odhq0kmsoof3" path="res://icons/new_tag_icon.svg" id="7_cnyh0"]
-[ext_resource type="Texture2D" uid="uid://dsmluyy8xjrcu" path="res://icons/copy_icon.svg" id="7_m5uyt"]
 [ext_resource type="AudioStream" uid="uid://gi1ymi1byihj" path="res://audio/finish_sound.wav" id="8_3ouiu"]
 [ext_resource type="Texture2D" uid="uid://x4bxfsirj01j" path="res://icons/pepper_icon.svg" id="10_yemrx"]
 [ext_resource type="Script" uid="uid://dpo5arisp1efd" path="res://scenes/tag_editor_window.gd" id="12_lg3hj"]
@@ -584,24 +583,6 @@ layout_mode = 2
 text = "Your prompt"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="CopyTagsBtn" type="Button" parent="CountdownContainer/VBoxContainer/Label"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -8.0
-offset_top = -4.0
-offset_bottom = 4.0
-grow_horizontal = 0
-grow_vertical = 2
-tooltip_text = "Copy tags"
-icon = ExtResource("7_m5uyt")
-icon_alignment = 1
-expand_icon = true
 
 [node name="PanelContainer" type="PanelContainer" parent="CountdownContainer/VBoxContainer"]
 layout_mode = 2
