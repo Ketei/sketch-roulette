@@ -18,6 +18,7 @@ var tag_id: int = 0
 
 
 func _ready() -> void:
+	group_trigger_mn_btn.get_popup().max_size = Vector2i(250, 130)
 	group_trigger_mn_btn.get_popup().hide_on_checkable_item_selection = false
 	group_trigger_mn_btn.get_popup().index_pressed.connect(_on_groups_idx_pressed)
 	remove_tag_btn.pressed.connect(_on_erase_tag_pressed)
@@ -41,6 +42,7 @@ func set_groups(groups: Array[Dictionary], skip_groups: Array = [], restore: boo
 		popup.add_check_item(
 				group_item.name,
 				group_item.id)
+		popup.set_item_tooltip(idx, group_item.name)
 		
 		if restore and current_groups.has(group_item.id):
 			popup.set_item_checked(idx, current_groups[group_item.id])

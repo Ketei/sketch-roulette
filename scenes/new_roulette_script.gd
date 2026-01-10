@@ -99,6 +99,9 @@ func _ready() -> void:
 	get_window().title = "SketchRoulette - " + ProjectSettings.get_setting("application/config/version")
 	get_window().min_size = Vector2i(450, 600)
 	
+	preset_opt_btn.get_popup().max_size = Vector2i(390, 330)
+	group_opt_btn.get_popup().max_size = Vector2i(340, 400)
+	
 	database.path = "user://main_database.db"
 	database.verbosity_level = SQLite.VerbosityLevel.NORMAL
 	
